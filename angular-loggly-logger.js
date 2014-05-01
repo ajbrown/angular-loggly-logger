@@ -19,14 +19,14 @@
 
         var https = true;
         var extra = {};
-        var includeCurrentUrl = true;
+        var includeCurrentUrl = false;
         var includeTimestamp = false;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
 
         var buildUrl = function ( data ) {
-          var msg = encodeURIComponent( angular.toJson( data ) )
+          var msg = encodeURIComponent( angular.toJson( data ) );
           return (https ? 'https' : 'http') + endpoint + token + '.gif?PLAINTEXT=' + msg;
         };
 
