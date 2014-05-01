@@ -4,6 +4,12 @@ loggly.
 
 # Getting Started
 
+ngLoggly can be installed with bower:
+
+```
+bower install angular-loggly-logger
+```
+
 Once configured (by including "ngLoggly" as a module dependency), the $log
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
@@ -90,6 +96,8 @@ You can also default some "extra/default" information to be sent with each log m
 Be aware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any properties in your `obj` that are the same as your `extra` will be overwritten.  
 
 ### TODO
+
+- Update (broken) tests to cover Image.src method of sending log messages.
 - Support for input [Tags](https://www.loggly.com/docs/tags/)
 - Support batching of requests.
 - Support session tracking (each client sends an identifier for all logs)
