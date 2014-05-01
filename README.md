@@ -22,6 +22,9 @@ angular.module( 'myApp', ['ngLoggly'] )
     
     //This will be sent to both the console and Loggly
     $log.info( "I'm a little teapot." );
+    
+    //This will be sent to loggly only
+    LogglyLogger.sendMessage( 'Short and Stout.' )
   }
 
 ```
