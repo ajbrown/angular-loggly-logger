@@ -7,7 +7,7 @@
  *  provided the foundation (if not the majority of the brainpower) for this
  *  module.
  */
-;(function( angular ) {
+; (function( angular ) {
   "use strict";
 
   angular.module( 'ngLoggly.logger', [] )
@@ -25,8 +25,9 @@
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
 
-        var buildUrl = function () {
-          return (https ? 'https' : 'http') + endpoint + token;
+        var buildUrl = function ( data ) {
+          var msg = encodeURIComponent( angular.toJson( data ) )
+          return (https ? 'https' : 'http') + endpoint + token + '.gif?PLAINTEXT=' + msg;
         };
 
         this.setExtra = function (d) {
@@ -85,13 +86,14 @@
             }
 
             //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
-            var $http = $injector.get( '$http' );
             var $location = $injector.get( '$location' );
 
             lastLog = new Date();
 
             var sentData = angular.extend(extra, data, {}),
-              headers = {'Content-Type': 'application/x-www-form-urlencoded' };
+              headers = {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+              };
 
             if (includeCurrentUrl) {
               sentData.url = $location.absUrl()
@@ -101,8 +103,8 @@
               sentData.timestamp = lastLog.toISOString();
             }
 
-            $http.post(buildUrl(), sentData, { headers: headers })
-              .then(logSuccessHandler, logFailureHandler);
+            //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
+            new Image().src = buildUrl(sentData);
           };
 
           var attach = function() {
