@@ -14,7 +14,7 @@
         "angular-loader": "~1.2.16"
     },
     "ignore": [
-        "app",
+        "demo",
         "test",
         "Gruntfile.js",
         "package.json",
