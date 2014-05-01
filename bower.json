@@ -1,7 +1,11 @@
 {
-  "name": "angular-loggly",
+  "name": "angular-loggly-logger",
   "version": "0.0.1",
-  "main" : "angular-loggly.js",
+  "main" : "angular-loggly-loger.js",
+  "keywords": ["angularjs", "loggly"],
+  "authors": [
+    { "name": "A.J. Brown", "email": "aj@ajbrown.org" }
+  ],
   "dependencies": {
     "angular": "~1.2.16"
     },
