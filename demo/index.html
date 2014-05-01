@@ -1,0 +1,27 @@
+<!doctype html>
+<html ng-app="ngLoggly.demo">
+  <head>
+    
+  </head>
+  <body ng-controller="MainCtrl">
+
+    <p>
+      Make sure you edit demo/app.js, and add a valid inputToken to the "logglyInputToenk" constant's value.!
+    </p>
+    
+    <form name="form" novalidate>
+      <p>
+        <label>Message to send:</label><br/>
+        <input ng-model="message" required/>
+      </p>  
+
+      <button ng-click="logIt()" ng-disabled="form.$invalid">Log It!</button>
+      <button ng-click="megaLogIt()" ng-disabled="form.$invalid">Mega Log It!</button>
+
+    </form>
+
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../angular-loggly-logger.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
