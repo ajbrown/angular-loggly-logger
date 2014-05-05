@@ -70,13 +70,13 @@ The following configuration options are available.
 ```
   LogglyLoggerProvider
   
-    .inputToken( string ) //
+    .inputToken( string ) // The token for the input logs will be sent.  If not set, no messages will be sent to loggly.
   
     .useHttps( boolean )  // Requests will be sent over HTTPS if set to true.  Default is true.
   
     .includeUrl( boolean ) // The value of $location.absUrl() will be sent as the "url" key if set to true.  Default is false.
   
-    .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is true.
+    .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is false.
   
 ```
 
