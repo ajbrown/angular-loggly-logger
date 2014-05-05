@@ -133,7 +133,7 @@
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
 
-              logFn.call(null, args);
+              logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level, message: msg };
