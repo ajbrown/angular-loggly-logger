@@ -21,13 +21,14 @@
         var extra = {};
         var includeCurrentUrl = false;
         var includeTimestamp = false;
+        var tag = 'angular';
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
 
         var buildUrl = function ( data ) {
           var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + '.gif?PLAINTEXT=' + msg;
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/'+ tag + '/.gif?PLAINTEXT=' + msg;
         };
 
         this.setExtra = function (d) {
@@ -70,7 +71,16 @@
 
           return includeTimestamp;
         };
+        
+        this.inputTag = function (usrTag){
+          if (angular.isDefined(usrTag)) {
+            tag = usrTag;
+            return self;
+          }
 
+          return tag;
+        }
+        
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
