@@ -22,6 +22,7 @@
         var includeCurrentUrl = false;
         var includeTimestamp = false;
         var tag = 'angular';
+        var sendConsoleErrors = false;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
@@ -81,6 +82,15 @@
           return tag;
         }
         
+        this.sendConsoleErrors = function (flag){
+          if (angular.isDefined(flag)) {
+            sendConsoleErrors = flag;
+            return self;
+          }
+
+          return sendConsoleErrors;
+        }
+        
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
@@ -122,6 +132,7 @@
 
           return {
             lastLog: function(){ return lastLog },
+            sendConsoleErrors: function(){ return sendConsoleErrors },
             attach: attach,
             sendMessage: sendMessage
           }
@@ -146,7 +157,18 @@
               logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
-              var sending = { level: level, message: msg };
+              var sending = { level: level, message: msg, stack: {} };
+              
+              if(angular.isDefined(msg.stack)){
+                if(logger.sendConsoleErrors() === true){
+                  sending.message = msg.message;
+                  sending.stack = msg.stack;
+                }
+                else{
+                  return;
+                }
+              }
+              
               if( loggerName ) {
                 sending.logger = msg
               }
