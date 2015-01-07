@@ -22,21 +22,40 @@ describe('ngLoggly Module:', function() {
     inject(function () {});
   });
 
+
   describe( 'loggly service:', function() {
 
-    var service, $httpBackend, $log;
+    var service, $log, imageMock;
 
-    beforeEach(inject(function ($injector) {
-      service = $injector.get('LogglyLogger');
-      service.attach();
+    // helper function to parse payload of generated image url
+    // pass in instantiated instance of URL with the 'src' proprty
+    // of the mocked image as its argument. (e.g. new URL(imageMock.src))
 
-      $httpBackend = $injector.get('$httpBackend');
-      $log = $injector.get('$log');
-    }));
+    var parsePayload = function(constructedURL) {
+      var searchPayload = constructedURL.search.slice('?PLAINTEXT='.length);
+      return angular.fromJson(decodeURIComponent(searchPayload));     
+    };
+
+    beforeEach(function () {
+      inject(function ($injector) {
+        service = $injector.get('LogglyLogger');
+        service.attach();
+
+        $log = $injector.get('$log');
+      });
+      
+      // return a mock constructed Image when 'new Image()' get called
+      // in the service. otherwise, when you call service.sendMessage,
+      // the app actually makes a get request to the specified url
+
+      spyOn(window, 'Image').andCallFake(function() {
+        imageMock = { src: {} }
+        return imageMock;
+      });
+    });
 
     afterEach(function () {
-      $httpBackend.verifyNoOutstandingExpectation();
-      $httpBackend.verifyNoOutstandingRequest();
+      imageMock = undefined;
     });
 
     it('should be registered', function () {
@@ -45,54 +64,61 @@ describe('ngLoggly Module:', function() {
 
     it('will not send a message to loggly if a token is not specified', function () {
       service.sendMessage("A test message");
+      expect(imageMock).toBe(undefined);
     });
 
     it('will send a message to loggly when properly configured', function () {
       var token = 'test123456';
       var message = { message: 'A test message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
-
-      $httpBackend.whenPOST(url, message).respond(200, { response: 'OK' });
+      var generatedURL;
 
       logglyLoggerProvider.inputToken(token);
       logglyLoggerProvider.includeUrl(false);
 
-      $httpBackend.expect('POST', url, message).respond(200, { response: 'OK' });
-
       service.sendMessage(message);
 
-      $httpBackend.flush();
+      generatedURL = new URL(imageMock.src);
+      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
     });
 
-    it('will use http if useHttps is set to false', function () {
+    it('will use http if use Https is set to false', function () {
       var token = 'test123456';
       var message = { message: 'A message' };
       var url = 'http://logs-01.loggly.com/inputs/' + token;
+      var generatedURL;
 
       logglyLoggerProvider.inputToken(token);
       logglyLoggerProvider.useHttps(false);
       logglyLoggerProvider.includeUrl(false);
 
-      $httpBackend.expect('POST', url, message).respond(200);
-
       service.sendMessage(message);
 
-      $httpBackend.flush();
+      generatedURL = new URL(imageMock.src);
+
+      expect(generatedURL.protocol).toEqual('http:');
+
     });
 
     it('will include the current url if includeUrl() is not set to false', function () {
       var token = 'test123456';
       var message = { msg: 'A Test message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
+      var parsedPayload;
+
+      inject(function ($injector) {
+        // mock browser url
+        $injector.get('$browser').url('http://bloggly.com');
+      });
 
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( true );
 
-      $httpBackend.expect( 'POST', url, { msg:'A Test message', url: 'http://server/' } ).respond( 200 );
-
       service.sendMessage( message );
 
-      $httpBackend.flush();
+      parsedPayload = parsePayload(new URL(imageMock.src));
+      expect(parsedPayload.url).toEqual('http://bloggly.com');
+
     });
 
     it( '$log has a logglySender attached', function() {
@@ -103,35 +129,14 @@ describe('ngLoggly Module:', function() {
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( false );
 
-      var expected = { message: logMessage, level: 'DEBUG' }
+      angular.forEach(['DEBUG', 'INFO', 'WARN', 'ERROR'], function (level) {
+        $log[level.toLowerCase()].call($log, logMessage);
+        var parsedPayload = parsePayload(new URL(imageMock.src));
+        expect(parsedPayload.level).toEqual(level);
+      });
 
-
-      //DEBUG
-      $httpBackend.expect( 'POST', url, expected ).respond( 200 );
-      $log.debug( logMessage );
-      $httpBackend.flush();
-
-      //INFO
-      expected.level = 'INFO';
-      $httpBackend.expect( 'POST', url, expected ).respond( 200 );
-      $log.info( logMessage );
-      $httpBackend.flush();
-
-      //WARN
-      expected.level = 'WARN';
-      $httpBackend.expect( 'POST', url, expected ).respond( 200 );
-      $log.warn( logMessage );
-      $httpBackend.flush();
-
-      //ERROR
-      expected.level = 'ERROR';
-      $httpBackend.expect( 'POST', url, expected ).respond( 200 );
-      $log.error( logMessage );
-      $httpBackend.flush();
     });
 
-  })
-
-
+  });
 
 });
