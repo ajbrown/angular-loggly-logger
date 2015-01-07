@@ -13,6 +13,9 @@ bower install angular-loggly-logger
 Once configured (by including "ngLoggly" as a module dependency), the $log
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
+The plain text messages are sent into the "json.message" field with the decorated log
+while custom JSON objects are sent via "json.messageObj" field as Loggly only supports
+one type per field.
 
 To use both the decorated $log and the LogglyLogger service, you must first
 configure it with an inputToken, which is done via the LogglyLoggerProvider:
@@ -78,6 +81,8 @@ The following configuration options are available.
   
     .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is false.
     
+    .inputTag("angular,customTag") // The tags will be included with the logs. default is "angular".
+    
     .sendConsoleErrors( boolean ) // Sends console error stack traces to Loggly if set to true. default is false.
   
 ```
@@ -100,6 +105,5 @@ Be aware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any 
 ### TODO
 
 - Update (broken) tests to cover Image.src method of sending log messages.
-- Support for input [Tags](https://www.loggly.com/docs/tags/)
 - Support batching of requests.
 - Support session tracking (each client sends an identifier for all logs)
