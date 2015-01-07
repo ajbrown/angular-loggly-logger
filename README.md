@@ -97,7 +97,6 @@ Be aware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any 
 
 ### TODO
 
-- Update (broken) tests to cover Image.src method of sending log messages.
 - Support for input [Tags](https://www.loggly.com/docs/tags/)
 - Support batching of requests.
 - Support session tracking (each client sends an identifier for all logs)
