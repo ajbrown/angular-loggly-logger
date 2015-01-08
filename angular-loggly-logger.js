@@ -110,8 +110,11 @@
 
             lastLog = new Date();
 
-            var sentData = angular.extend({}, extra, data);
-          
+            var sentData = angular.extend(extra, data, {}),
+              headers = {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+              };
+
             if (includeCurrentUrl) {
               sentData.url = $location.absUrl()
             }
@@ -124,9 +127,13 @@
             new Image().src = buildUrl(sentData);
           };
 
+          var attach = function() {
+          };
+
           return {
             lastLog: function(){ return lastLog },
             sendConsoleErrors: function(){ return sendConsoleErrors },
+            attach: attach,
             sendMessage: sendMessage
           }
         }];
@@ -150,25 +157,24 @@
               logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
-              var sending = { level: level };
+              var sending = { level: level, message: msg, stack: {}, messageObj: {} };
               
+              //handling custom objects
+              if(angular.isObject(msg)){
+                sending.message = {};
+                sending.messageObj = msg;
+              }
+              
+              //handling console errors
               if(angular.isDefined(msg.stack)){
-                //handling console errors
                 if(logger.sendConsoleErrors() === true){
-                    sending.message = msg.message;
-                    sending.stack = msg.stack;
+                  sending.message = msg.message;
+                  sending.messageObj = {};
+                  sending.stack = msg.stack;
                 }
                 else{
                   return;
                 }
-              }
-              else if(angular.isObject(msg)){
-                //handling JSON objects
-                sending.messageObj = msg;
-              }
-              else{
-                //sending plain text
-                sending.message = msg;
               }
               
               if( loggerName ) {
