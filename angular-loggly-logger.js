@@ -157,19 +157,19 @@
               logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
-              var sending = { level: level, message: msg, stack: {}, messageObj: {} };
+              var sending = { level: level, message: msg, stack: {}, customObj: {} };
               
               //handling custom objects
               if(angular.isObject(msg)){
                 sending.message = {};
-                sending.messageObj = msg;
+                sending.customObj = msg;
               }
               
               //handling console errors
               if(angular.isDefined(msg.stack)){
                 if(logger.sendConsoleErrors() === true){
                   sending.message = msg.message;
-                  sending.messageObj = {};
+                  sending.customObj = {};
                   sending.stack = msg.stack;
                 }
                 else{
