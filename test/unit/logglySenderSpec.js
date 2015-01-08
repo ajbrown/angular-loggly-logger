@@ -2,20 +2,20 @@
 
 /* jasmine specs for services go here */
 
-describe('ngLoggly Module:', function() {
+describe('logglyLogger Module:', function() {
   var moduleTest = this;
   var logglyLoggerProvider;
 
   beforeEach(function () {
     // Initialize the service provider
     // by injecting it to a fake module's config block
-    var fakeModule = angular.module('testing.harness', ['ngLoggly'], function () {});
+    var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
     fakeModule.config( function (LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
     });
 
     // Initialize test.app injector
-    module('ngLoggly', 'testing.harness');
+    module('logglyLogger', 'testing.harness');
 
     // Kickstart the injectors previously registered
     // with calls to angular.mock.module
@@ -33,7 +33,7 @@ describe('ngLoggly Module:', function() {
 
     var parsePayload = function(constructedURL) {
       var searchPayload = constructedURL.search.slice('?PLAINTEXT='.length);
-      return angular.fromJson(decodeURIComponent(searchPayload));     
+      return angular.fromJson(decodeURIComponent(searchPayload));
     };
 
     beforeEach(function () {
@@ -43,7 +43,7 @@ describe('ngLoggly Module:', function() {
 
         $log = $injector.get('$log');
       });
-      
+
       // return a mock constructed Image when 'new Image()' get called
       // in the service. otherwise, when you call service.sendMessage,
       // the app actually makes a get request to the specified url

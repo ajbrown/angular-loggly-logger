@@ -1,14 +1,14 @@
 ; (function(angular) {
 
-    angular.module( 'ngLoggly.demo', ['ngLoggly'] )
+    angular.module( 'logglyLogger.demo', ['logglyLogger'] )
 
-    .constant( 
-        'logglyInputToken', 
-        '<YOUR TOKEN>' 
+    .constant(
+        'logglyInputToken',
+        '<YOUR TOKEN>'
     )
 
     .config( function( LogglyLoggerProvider, logglyInputToken ) {
-        
+
         LogglyLoggerProvider
             .inputToken( logglyInputToken )
             .useHttps( true )
@@ -19,7 +19,7 @@
     } )
 
     .controller( 'MainCtrl', function( $scope, $log ) {
-        
+
         $scope.inputToken = null;
         $scope.message = '';
 
@@ -33,7 +33,7 @@
         $scope.megaLogIt = function() {
             megaLog.warn( $scope.message );
         }
-        
+
     })
 
 

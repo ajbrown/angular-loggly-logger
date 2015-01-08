@@ -8,21 +8,21 @@ loggly.
 
 # Getting Started
 
-ngLoggly can be installed with bower:
+LogglyLogger can be installed with bower:
 
 ```
 bower install angular-loggly-logger
 ```
 
-Once configured (by including "ngLoggly" as a module dependency), the $log
+Once configured (by including "logglyLogger" as a module dependency), the $log
 service will automatically be decorated, and all messages logged will be handled
-as normal as well as formated and passed to LogglyLogger.sendMessage.
+as normal as well as formated and pssed to LogglyLogger.sendMessage.
 
 To use both the decorated $log and the LogglyLogger service, you must first
 configure it with an inputToken, which is done via the LogglyLoggerProvider:
 
 ```
-angular.module( 'myApp', ['ngLoggly'] )
+angular.module( 'myApp', ['logglyLogger'] )
 
   .config( function( LogglyLoggerProvider ) {
     LogglyLoggerProvider.inputToken( '<loggly input token here>' );
