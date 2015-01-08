@@ -1,5 +1,5 @@
 /**
- *  ngLoggly is a module which will send your log messages to a configured
+ *  logglyLogger is a module which will send your log messages to a configured
  *  [Loggly](http://loggly.com) connector.
  *
  *  Major credit should go to Thomas Burleson, who's highly informative blog
@@ -10,7 +10,7 @@
 ; (function( angular ) {
   "use strict";
 
-  angular.module( 'ngLoggly.logger', [] )
+  angular.module( 'logglyLogger.logger', [] )
     .provider( 'LogglyLogger', function() {
         var self = this;
 
@@ -120,7 +120,7 @@
     } );
 
 
-    angular.module( 'ngLoggly', ['ngLoggly.logger'] )
+    angular.module( 'logglyLogger', ['logglyLogger.logger'] )
       .config( [ '$provide', function( $provide ) {
 
         $provide.decorator('$log', [ "$delegate", '$injector', function ( $delegate, $injector ) {
@@ -187,4 +187,3 @@
 
 
 })(window.angular);
-
