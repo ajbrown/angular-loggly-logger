@@ -123,10 +123,14 @@
             //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
             new Image().src = buildUrl(sentData);
           };
-
+          
+          var attach = function() {
+          };
+          
           return {
             lastLog: function(){ return lastLog },
             sendConsoleErrors: function(){ return sendConsoleErrors },
+            attach: attach,
             sendMessage: sendMessage
           }
         }];
