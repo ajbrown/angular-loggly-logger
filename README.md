@@ -2,19 +2,15 @@ ngLoggly is a module which will decorate Angular's $log service, and provide a
 LogglyLogger service which can be used to manually send messages of any kind to
 loggly.
 
-### Status
-[![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
-
-
 # Getting Started
 
-LogglyLogger can be installed with bower:
+ngLoggly can be installed with bower:
 
 ```
 bower install angular-loggly-logger
 ```
 
-Once configured (by including "logglyLogger" as a module dependency), the $log
+Once configured (by including "ngLoggly" as a module dependency), the $log
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
 The plain text messages are sent into the "json.message" field with the decorated log
@@ -25,7 +21,7 @@ To use both the decorated $log and the LogglyLogger service, you must first
 configure it with an inputToken, which is done via the LogglyLoggerProvider:
 
 ```
-angular.module( 'myApp', ['logglyLogger'] )
+angular.module( 'myApp', ['ngLoggly'] )
 
   .config( function( LogglyLoggerProvider ) {
     LogglyLoggerProvider.inputToken( '<loggly input token here>' );
@@ -108,5 +104,6 @@ Be aware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any 
 
 ### TODO
 
+- Update (broken) tests to cover Image.src method of sending log messages.
 - Support batching of requests.
 - Support session tracking (each client sends an identifier for all logs)
