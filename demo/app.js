@@ -14,6 +14,7 @@
             .useHttps( true )
             .includeTimestamp( true )
             .includeUrl( true )
+            .sendConsoleErrors(true)
         ;
 
     } )

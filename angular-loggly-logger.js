@@ -21,13 +21,15 @@
         var extra = {};
         var includeCurrentUrl = false;
         var includeTimestamp = false;
+        var tag = 'angular';
+        var sendConsoleErrors = false;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
 
         var buildUrl = function ( data ) {
           var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + '.gif?PLAINTEXT=' + msg;
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/'+ tag + '/.gif?PLAINTEXT=' + msg;
         };
 
         this.setExtra = function (d) {
@@ -70,7 +72,25 @@
 
           return includeTimestamp;
         };
+        
+        this.inputTag = function (usrTag){
+          if (angular.isDefined(usrTag)) {
+            tag = usrTag;
+            return self;
+          }
 
+          return tag;
+        }
+        
+        this.sendConsoleErrors = function (flag){
+          if (angular.isDefined(flag)) {
+            sendConsoleErrors = flag;
+            return self;
+          }
+
+          return sendConsoleErrors;
+        }
+        
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
@@ -90,11 +110,8 @@
 
             lastLog = new Date();
 
-            var sentData = angular.extend(extra, data, {}),
-              headers = {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-              };
-
+            var sentData = angular.extend({}, extra, data);
+          
             if (includeCurrentUrl) {
               sentData.url = $location.absUrl()
             }
@@ -106,12 +123,13 @@
             //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
             new Image().src = buildUrl(sentData);
           };
-
+          
           var attach = function() {
           };
-
+          
           return {
             lastLog: function(){ return lastLog },
+            sendConsoleErrors: function(){ return sendConsoleErrors },
             attach: attach,
             sendMessage: sendMessage
           }
@@ -136,7 +154,27 @@
               logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
-              var sending = { level: level, message: msg };
+              var sending = { level: level };
+              
+              if(angular.isDefined(msg.stack)){
+                //handling console errors
+                if(logger.sendConsoleErrors() === true){
+                    sending.message = msg.message;
+                    sending.stack = msg.stack;
+                }
+                else{
+                  return;
+                }
+              }
+              else if(angular.isObject(msg)){
+                //handling JSON objects
+                sending.messageObj = msg;
+              }
+              else{
+                //sending plain text
+                sending.message = msg;
+              }
+              
               if( loggerName ) {
                 sending.logger = msg
               }
