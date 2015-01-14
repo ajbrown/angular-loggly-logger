@@ -168,7 +168,7 @@
               }
               else if(angular.isObject(msg)){
                 //handling JSON objects
-                sending.messageObj = msg;
+                sending = angular.extend({}, msg, sending);
               }
               else{
                 //sending plain text
