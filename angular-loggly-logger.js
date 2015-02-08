@@ -23,6 +23,7 @@
         var includeTimestamp = false;
         var tag = 'angular';
         var sendConsoleErrors = false;
+        var logToConsole = true;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
@@ -90,6 +91,15 @@
 
           return sendConsoleErrors;
         }
+
+        this.logToConsole = function (flag) {
+          if (angular.isDefined(flag)) {
+            logToConsole = !!flag;
+            return self;
+          }
+
+          return logToConsole;
+        };
         
         this.$get = [ '$injector', function ($injector) {
 
@@ -131,7 +141,8 @@
             lastLog: function(){ return lastLog },
             sendConsoleErrors: function(){ return sendConsoleErrors },
             attach: attach,
-            sendMessage: sendMessage
+            sendMessage: sendMessage,
+            logToConsole: logToConsole
           }
         }];
 
@@ -151,7 +162,9 @@
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
 
-              logFn.apply(null, args);
+              if(logger.logToConsole) {
+                logFn.apply(null, args);
+              }
 
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level };
