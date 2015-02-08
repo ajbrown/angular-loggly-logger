@@ -78,7 +78,7 @@ The following configuration options are available.
   
     .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is false.
 
-    .logToConsole( boolean ) // Whether to log to console, can easily turn off in produciton. Default is true.
+    .logToConsole( boolean ) // Whether to log to console, can easily turn off in production. Default is true.
   
 ```
 
