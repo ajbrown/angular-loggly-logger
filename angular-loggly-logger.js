@@ -21,7 +21,6 @@
         var extra = {};
         var includeCurrentUrl = false;
         var includeTimestamp = false;
-        var logToConsole = true;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
@@ -72,15 +71,6 @@
           return includeTimestamp;
         };
 
-        this.logToConsole = function (flag) {
-          if (angular.isDefined(flag)) {
-            logToConsole = !!flag;
-            return self;
-          }
-
-          return logToConsole;
-        };
-
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
@@ -121,7 +111,6 @@
           };
 
           return {
-            logToConsole: logToConsole,
             lastLog: function(){ return lastLog },
             attach: attach,
             sendMessage: sendMessage
@@ -144,9 +133,7 @@
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
 
-              if(logger.logToConsole) {
-                logFn.apply(null, args);
-              }
+              logFn.apply(null, args);
 
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level, message: msg };

@@ -77,8 +77,6 @@ The following configuration options are available.
     .includeUrl( boolean ) // The value of $location.absUrl() will be sent as the "url" key if set to true.  Default is false.
   
     .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is false.
-
-    .logToConsole( boolean ) // Whether to log to console, can easily turn off in produciton. Default is true.
   
 ```
 
