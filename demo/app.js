@@ -15,6 +15,7 @@
             .includeTimestamp( true )
             .includeUrl( true )
             .sendConsoleErrors(true)
+            .logToConsole(true)
         ;
 
     } )
