@@ -16,7 +16,6 @@
     "shelljs": "^0.2.6"
   },
   "scripts": {
-    "install" : "npm install",
     "postinstall": "bower install",
     "start": "http-server -p 8000",
     "update-webdriver": "webdriver-manager update",
