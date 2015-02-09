@@ -39,6 +39,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-karma');
 
     grunt.registerTask('default', ['uglify'] );
-    grunt.registerTask('test', ['karma:travis:run'] );
+    grunt.registerTask('test', ['karma:travis'] );
 
 };
