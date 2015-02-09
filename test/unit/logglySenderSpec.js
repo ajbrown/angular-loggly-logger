@@ -3,8 +3,9 @@
 /* jasmine specs for services go here */
 
 describe('logglyLogger Module:', function() {
-  var moduleTest = this;
-  var logglyLoggerProvider;
+  var logglyLoggerProvider,
+      moduleTest = this,
+      levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
 
   beforeEach(function () {
     // Initialize the service provider
@@ -23,7 +24,36 @@ describe('logglyLogger Module:', function() {
   });
 
 
-  describe( 'loggly service:', function() {
+  describe( 'LogglyLoggerProvider', function() {
+
+    it( 'can have a logging level configured', function() {
+
+        for( var i in levels ) {
+            logglyLoggerProvider.level( levels[i] );
+            expect( logglyLoggerProvider.level() ).toEqual( levels[i] );
+        }
+    });
+
+
+    it( 'will throw an exception if an invalid level is supplied', function() {
+
+        expect( function() { logglyLoggerProvider.level('TEST') } ).toThrow();
+    });
+
+    it( 'can determine if a given level is enabled', function() {
+        for( var a in levels ) {
+
+            logglyLoggerProvider.level( levels[a] );
+
+            for( var b in levels ) {
+                expect( logglyLoggerProvider.isLevelEnabled( levels[b] )).toBe( b >= a );
+            }
+        }
+    });
+
+  });
+
+  describe( 'LogglyLogger', function() {
 
     var service, $log, imageMock;
 
@@ -131,11 +161,35 @@ describe('logglyLogger Module:', function() {
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( false );
 
-      angular.forEach(['DEBUG', 'INFO', 'WARN', 'ERROR'], function (level) {
+      angular.forEach( levels, function (level) {
         $log[level.toLowerCase()].call($log, logMessage);
         var parsedPayload = parsePayload(new URL(imageMock.src));
         expect(parsedPayload.level).toEqual(level);
       });
+
+    });
+
+    it( 'will not send messages for levels that are not enabled', function() {
+        var logMessage = 'A Test Log Message';
+
+        spyOn(service, 'sendMessage').andCallThrough();
+
+        for( var a in levels ) {
+
+            logglyLoggerProvider.level( levels[a] );
+
+            for( var b in levels ) {
+
+                $log[levels[b].toLowerCase()].call($log, logMessage);
+                if( b >= a ) {
+                    expect(service.sendMessage).toHaveBeenCalled();
+                } else {
+                    expect(service.sendMessage).not.toHaveBeenCalled();
+                }
+
+                service.sendMessage.reset();
+            }
+        }
 
     });
 

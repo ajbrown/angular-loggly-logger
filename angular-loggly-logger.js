@@ -17,12 +17,17 @@
         var logSuccessHandler;
         var logFailureHandler;
 
+        var logLevels = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
+
         var https = true;
         var extra = {};
         var includeCurrentUrl = false;
         var includeTimestamp = false;
         var tag = 'angular';
         var sendConsoleErrors = false;
+
+        // The minimum lavel of messages that should be sent to loggly.
+        var level = 0;
 
         var token = null;
         var endpoint = '://logs-01.loggly.com/inputs/';
@@ -72,7 +77,7 @@
 
           return includeTimestamp;
         };
-        
+
         this.inputTag = function (usrTag){
           if (angular.isDefined(usrTag)) {
             tag = usrTag;
@@ -80,20 +85,42 @@
           }
 
           return tag;
-        }
-        
+        };
+
         this.sendConsoleErrors = function (flag){
           if (angular.isDefined(flag)) {
-            sendConsoleErrors = flag;
+            sendConsoleErrors = !!flag;
             return self;
           }
 
           return sendConsoleErrors;
-        }
-        
+        };
+
+        this.level = function ( name ) {
+
+          if( angular.isDefined( name ) ) {
+            var newLevel = logLevels.indexOf( name.toUpperCase() );
+
+            if( newLevel < 0 ) {
+                throw "Invalid logging level specified: " + name;
+            } else {
+                level = newLevel;
+            }
+
+            return self;
+          }
+
+          return logLevels[level];
+        };
+
+        this.isLevelEnabled = function( name ) {
+            return logLevels.indexOf( name.toUpperCase() ) >= level;
+        };
+
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
+
 
           /**
            * Send the specified data to loggly as a json message.
@@ -111,7 +138,7 @@
             lastLog = new Date();
 
             var sentData = angular.extend({}, extra, data);
-          
+
             if (includeCurrentUrl) {
               sentData.url = $location.absUrl()
             }
@@ -123,13 +150,15 @@
             //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
             new Image().src = buildUrl(sentData);
           };
-          
+
           var attach = function() {
           };
-          
+
           return {
             lastLog: function(){ return lastLog },
             sendConsoleErrors: function(){ return sendConsoleErrors },
+            level : function() { return level },
+            isLevelEnabled : self.isLevelEnabled,
             attach: attach,
             sendMessage: sendMessage
           }
@@ -151,11 +180,17 @@
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
 
+
               logFn.apply(null, args);
+
+              // Skip messages that have a level that's lower than the configured level for this logger.
+              if( !logger.isLevelEnabled( level ) ) {
+                return;
+              }
 
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level };
-              
+
               if(angular.isDefined(msg.stack)){
                 //handling console errors
                 if(logger.sendConsoleErrors() === true){
@@ -174,7 +209,7 @@
                 //sending plain text
                 sending.message = msg;
               }
-              
+
               if( loggerName ) {
                 sending.logger = msg
               }
@@ -200,18 +235,18 @@
           var getLogger = function ( name ) {
             return {
               log:    wrapLogFunction( _$log.log, 'INFO', name ),
+              debug:  wrapLogFunction( _$log.debug, 'DEBUG', name ),
               info:   wrapLogFunction( _$log.info, 'INFO', name ),
               warn:   wrapLogFunction( _$log.warn, 'WARN', name ),
-              debug:  wrapLogFunction( _$log.debug, 'DEBUG', name ),
               error:  wrapLogFunction( _$log.error, 'ERROR', name )
             }
           };
 
           //wrap the existing API
           $delegate.log =    wrapLogFunction($delegate.log, 'INFO');
+          $delegate.debug =  wrapLogFunction($delegate.debug, 'DEBUG');
           $delegate.info =   wrapLogFunction($delegate.info, 'INFO');
           $delegate.warn =   wrapLogFunction($delegate.warn, 'WARN');
-          $delegate.debug =  wrapLogFunction($delegate.debug, 'DEBUG');
           $delegate.error =  wrapLogFunction($delegate.error, 'ERROR');
 
           //Add some methods

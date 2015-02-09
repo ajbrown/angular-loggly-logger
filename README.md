@@ -76,7 +76,10 @@ The following configuration options are available.
 
 ```
   LogglyLoggerProvider
-  
+
+    .level( string ) // The minimum logging level of messages that should be sent to Loggly.  Default is 'DEBUG', which
+                     // will send all messages.
+
     .inputToken( string ) // The token for the input logs will be sent.  If not set, no messages will be sent to loggly.
   
     .useHttps( boolean )  // Requests will be sent over HTTPS if set to true.  Default is true.
