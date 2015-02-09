@@ -78,7 +78,7 @@ describe('logglyLogger Module:', function() {
       // in the service. otherwise, when you call service.sendMessage,
       // the app actually makes a get request to the specified url
 
-      spyOn(window, 'Image').andCallFake(function() {
+      spyOn(window, 'Image').and.callFake(function() {
         imageMock = { src: {} }
         return imageMock;
       });
@@ -172,7 +172,7 @@ describe('logglyLogger Module:', function() {
     it( 'will not send messages for levels that are not enabled', function() {
         var logMessage = 'A Test Log Message';
 
-        spyOn(service, 'sendMessage').andCallThrough();
+        spyOn(service, 'sendMessage').and.callThrough();
 
         for( var a in levels ) {
 
@@ -187,7 +187,7 @@ describe('logglyLogger Module:', function() {
                     expect(service.sendMessage).not.toHaveBeenCalled();
                 }
 
-                service.sendMessage.reset();
+                service.sendMessage.calls.reset();
             }
         }
 

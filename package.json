@@ -13,7 +13,10 @@
     "Vin Halbwachs (https://github.com/vhalbwachs)"
   ],
   "keywords": [
-    "angular", "logging", "logger", "log"
+    "angular",
+    "logging",
+    "logger",
+    "log"
   ],
   "license": "MIT",
   "devDependencies": {
@@ -23,7 +26,11 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-karma": "^0.10.1",
     "http-server": "^0.6.1",
+    "jasmine-core": "^2.2.0",
     "karma": "~0.12",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-jasmine": "^0.3.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-spec-reporter": "0.0.16",
     "protractor": "~0.17.0",
