@@ -1,15 +1,36 @@
 {
   "name": "angular-loggly-logger",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0",
   "description": "An AngularJs service and $log decorator for Loggly",
-  "repository": "https://github.com/ajbrown/angular-loggly-logger",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajbrown/angular-loggly-logger.git"
+  },
+  "bugs": "https://github.com/ajbrown/angular-loggly-logger/issues",
+  "author": "A.J. Brown <aj@ajbrown.org> (http://ajbrown.org)",
+  "contributors": [
+    "Jason Skowronski (https://github.com/mostlyjason)",
+    "Vin Halbwachs (https://github.com/vhalbwachs)"
+  ],
+  "keywords": [
+    "angular",
+    "logging",
+    "logger",
+    "log"
+  ],
   "license": "MIT",
   "devDependencies": {
     "bower": "^1.3.1",
     "grunt": "^0.4.4",
     "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-karma": "^0.10.1",
     "http-server": "^0.6.1",
+    "jasmine-core": "^2.2.0",
     "karma": "~0.12",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-jasmine": "^0.3.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-spec-reporter": "0.0.16",
     "protractor": "~0.17.0",
@@ -18,9 +39,9 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "http-server -p 8000",
-    "test": "karma start test/karma.conf.js",
     "update-webdriver": "webdriver-manager update",
-    "test-single-run": "karma start test/karma.conf.js  --single-run",
+    "test": "grunt karma:unit",
+    "test-single-run": "grunt karma:travis:run",
     "update-index-async": "node -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + cat('bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
   }
 }
