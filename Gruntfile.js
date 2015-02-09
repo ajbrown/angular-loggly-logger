@@ -16,11 +16,11 @@ module.exports = function(grunt) {
             configFile: 'test/karma.conf.js',
           },
           //continuous integration mode: run tests once in PhantomJS browser.
-          continuous: {
+          travis: {
             configFile: 'test/karma.conf.js',
             singleRun: true,
             browsers: ['PhantomJS']
-          },
+          }
       },
 
       watch: {
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
           karma: {
               files: ['*.js', '!*.min.js'],
               tasks: ['karma:unit:run'] //NOTE the :run flag
-          },
+          }
       }
 
     });
@@ -39,5 +39,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-karma');
 
     grunt.registerTask('default', ['uglify'] );
+    grunt.registerTask('test', ['karma:travis:run'] );
 
 };
