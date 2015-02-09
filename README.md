@@ -2,23 +2,30 @@ ngLoggly is a module which will decorate Angular's $log service, and provide a
 LogglyLogger service which can be used to manually send messages of any kind to
 loggly.
 
+### Status
+[![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
+
+
 # Getting Started
 
-ngLoggly can be installed with bower:
+LogglyLogger can be installed with bower:
 
 ```
 bower install angular-loggly-logger
 ```
 
-Once configured (by including "ngLoggly" as a module dependency), the $log
+Once configured (by including "logglyLogger" as a module dependency), the $log
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
+The plain text messages are sent into the "json.message" field with the decorated log
+while custom JSON objects are sent via "json.messageObj" field as Loggly only supports
+one type per field.
 
 To use both the decorated $log and the LogglyLogger service, you must first
 configure it with an inputToken, which is done via the LogglyLoggerProvider:
 
 ```
-angular.module( 'myApp', ['ngLoggly'] )
+angular.module( 'myApp', ['logglyLogger'] )
 
   .config( function( LogglyLoggerProvider ) {
     LogglyLoggerProvider.inputToken( '<loggly input token here>' );
@@ -63,13 +70,16 @@ When sent through the `$log` decorator, messages will be formatted as follows:
 
 Note that if you do not call `LogglyLoggerProvider.inputToken()` in a config method, messages will not be sent to loggly.  At the moment, there is no warning -- your message is just ignored.
 
-# Configuration 
+# Configuration
 
 The following configuration options are available.
 
 ```
   LogglyLoggerProvider
-  
+
+    .level( string ) // The minimum logging level of messages that should be sent to Loggly.  Default is 'DEBUG', which
+                     // will send all messages.
+
     .inputToken( string ) // The token for the input logs will be sent.  If not set, no messages will be sent to loggly.
   
     .useHttps( boolean )  // Requests will be sent over HTTPS if set to true.  Default is true.
@@ -77,6 +87,12 @@ The following configuration options are available.
     .includeUrl( boolean ) // The value of $location.absUrl() will be sent as the "url" key if set to true.  Default is false.
   
     .includeTimestamp( boolean ) // The current timestamp will be included if set to true.  default is false.
+    
+    .inputTag("angular,customTag") // The tags will be included with the logs. default is "angular".
+    
+    .sendConsoleErrors( boolean ) // Sends console error stack traces to Loggly if set to true. default is false.
+
+    .logToConsole( boolean ) // Whether to log to console, can easily turn off in produciton. Default is true.
   
 ```
 
@@ -97,6 +113,5 @@ Be aware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any 
 
 ### TODO
 
-- Support for input [Tags](https://www.loggly.com/docs/tags/)
 - Support batching of requests.
 - Support session tracking (each client sends an identifier for all logs)

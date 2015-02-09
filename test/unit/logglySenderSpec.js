@@ -2,20 +2,21 @@
 
 /* jasmine specs for services go here */
 
-describe('ngLoggly Module:', function() {
-  var moduleTest = this;
-  var logglyLoggerProvider;
+describe('logglyLogger Module:', function() {
+  var logglyLoggerProvider,
+      moduleTest = this,
+      levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
 
   beforeEach(function () {
     // Initialize the service provider
     // by injecting it to a fake module's config block
-    var fakeModule = angular.module('testing.harness', ['ngLoggly'], function () {});
+    var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
     fakeModule.config( function (LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
     });
 
     // Initialize test.app injector
-    module('ngLoggly', 'testing.harness');
+    module('logglyLogger', 'testing.harness');
 
     // Kickstart the injectors previously registered
     // with calls to angular.mock.module
@@ -23,7 +24,36 @@ describe('ngLoggly Module:', function() {
   });
 
 
-  describe( 'loggly service:', function() {
+  describe( 'LogglyLoggerProvider', function() {
+
+    it( 'can have a logging level configured', function() {
+
+        for( var i in levels ) {
+            logglyLoggerProvider.level( levels[i] );
+            expect( logglyLoggerProvider.level() ).toEqual( levels[i] );
+        }
+    });
+
+
+    it( 'will throw an exception if an invalid level is supplied', function() {
+
+        expect( function() { logglyLoggerProvider.level('TEST') } ).toThrow();
+    });
+
+    it( 'can determine if a given level is enabled', function() {
+        for( var a in levels ) {
+
+            logglyLoggerProvider.level( levels[a] );
+
+            for( var b in levels ) {
+                expect( logglyLoggerProvider.isLevelEnabled( levels[b] )).toBe( b >= a );
+            }
+        }
+    });
+
+  });
+
+  describe( 'LogglyLogger', function() {
 
     var service, $log, imageMock;
 
@@ -33,7 +63,7 @@ describe('ngLoggly Module:', function() {
 
     var parsePayload = function(constructedURL) {
       var searchPayload = constructedURL.search.slice('?PLAINTEXT='.length);
-      return angular.fromJson(decodeURIComponent(searchPayload));     
+      return angular.fromJson(decodeURIComponent(searchPayload));
     };
 
     beforeEach(function () {
@@ -43,12 +73,12 @@ describe('ngLoggly Module:', function() {
 
         $log = $injector.get('$log');
       });
-      
+
       // return a mock constructed Image when 'new Image()' get called
       // in the service. otherwise, when you call service.sendMessage,
       // the app actually makes a get request to the specified url
 
-      spyOn(window, 'Image').andCallFake(function() {
+      spyOn(window, 'Image').and.callFake(function() {
         imageMock = { src: {} }
         return imageMock;
       });
@@ -71,15 +101,17 @@ describe('ngLoggly Module:', function() {
       var token = 'test123456';
       var message = { message: 'A test message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
+      var tag = 'logglyLogger';
       var generatedURL;
 
       logglyLoggerProvider.inputToken(token);
       logglyLoggerProvider.includeUrl(false);
+      logglyLoggerProvider.inputTag(tag);
 
       service.sendMessage(message);
 
       generatedURL = new URL(imageMock.src);
-      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
+      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
     });
 
     it('will use http if useHttps is set to false', function () {
@@ -129,11 +161,35 @@ describe('ngLoggly Module:', function() {
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( false );
 
-      angular.forEach(['DEBUG', 'INFO', 'WARN', 'ERROR'], function (level) {
+      angular.forEach( levels, function (level) {
         $log[level.toLowerCase()].call($log, logMessage);
         var parsedPayload = parsePayload(new URL(imageMock.src));
         expect(parsedPayload.level).toEqual(level);
       });
+
+    });
+
+    it( 'will not send messages for levels that are not enabled', function() {
+        var logMessage = 'A Test Log Message';
+
+        spyOn(service, 'sendMessage').and.callThrough();
+
+        for( var a in levels ) {
+
+            logglyLoggerProvider.level( levels[a] );
+
+            for( var b in levels ) {
+
+                $log[levels[b].toLowerCase()].call($log, logMessage);
+                if( b >= a ) {
+                    expect(service.sendMessage).toHaveBeenCalled();
+                } else {
+                    expect(service.sendMessage).not.toHaveBeenCalled();
+                }
+
+                service.sendMessage.calls.reset();
+            }
+        }
 
     });
 

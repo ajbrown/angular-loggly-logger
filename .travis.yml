@@ -1,14 +1,20 @@
 language: node_js
 node_js:
-  - 0.10
+  - 0.1
+deploy:
+  - provider: npm
+    email: aj@ajbrown.org
+    api_key:
+      secure: C07sCtkimrvDgQZZUVWjlPD/axfRAYJEWMYW6Cu5T1qSz1BZwKmXxNLJouKk1Q+jwlWVWNnJ0kOL/cUTN7oo1YaIsHbE7ufxJoHeyPnOu7oz0FRxYDplZ/3ukQteDHxZkIYjgzfgXWGXbEDoOfzT63+DsDMXQDn7CQrs6bXxv0E=
+    on:
+      tags: true
 
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - npm install -g grunt-cli
   - npm start > /dev/null &
   - npm run update-webdriver
-  - sleep 1 # give server time to start
-
+  - sleep 1
 script:
-  - node_modules/.bin/karma start test/karma.conf.js --no-auto-watch --single-run --reporters=dots --browsers=Firefox
-  - node_modules/.bin/protractor test/protractor-conf.js --browser=firefox
+  - grunt test
