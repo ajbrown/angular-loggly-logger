@@ -91,6 +91,8 @@ The following configuration options are available.
     .inputTag("angular,customTag") // The tags will be included with the logs. default is "angular".
     
     .sendConsoleErrors( boolean ) // Sends console error stack traces to Loggly if set to true. default is false.
+
+    .logToConsole( boolean ) // Whether to log to console, can easily turn off in produciton. Default is true.
   
 ```
 

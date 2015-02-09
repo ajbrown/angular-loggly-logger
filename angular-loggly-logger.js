@@ -25,6 +25,7 @@
         var includeTimestamp = false;
         var tag = 'angular';
         var sendConsoleErrors = false;
+        var logToConsole = true;
 
         // The minimum lavel of messages that should be sent to loggly.
         var level = 0;
@@ -117,6 +118,16 @@
             return logLevels.indexOf( name.toUpperCase() ) >= level;
         };
 
+
+        this.logToConsole = function (flag) {
+          if (angular.isDefined(flag)) {
+            logToConsole = !!flag;
+            return self;
+          }
+
+          return logToConsole;
+        };
+        
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;
@@ -160,7 +171,8 @@
             level : function() { return level },
             isLevelEnabled : self.isLevelEnabled,
             attach: attach,
-            sendMessage: sendMessage
+            sendMessage: sendMessage,
+            logToConsole: logToConsole
           }
         }];
 
@@ -180,8 +192,9 @@
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
 
-
-              logFn.apply(null, args);
+              if(logger.logToConsole) {
+                logFn.apply(null, args);
+              }
 
               // Skip messages that have a level that's lower than the configured level for this logger.
               if( !logger.isLevelEnabled( level ) ) {
