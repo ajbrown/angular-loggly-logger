@@ -3,7 +3,7 @@ Angular Loggly Logger is a module which will decorate Angular's $log service, an
 
 
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
-![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg)](https://coveralls.io/r/ajbrown/angular-loggly-logger)
+[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg)](https://coveralls.io/r/ajbrown/angular-loggly-logger)
 
 
 
