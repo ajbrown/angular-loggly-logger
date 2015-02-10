@@ -27,7 +27,7 @@
         var sendConsoleErrors = false;
         var logToConsole = true;
 
-        // The minimum lavel of messages that should be sent to loggly.
+        // The minimum level of messages that should be sent to loggly.
         var level = 0;
 
         var token = null;
@@ -127,7 +127,7 @@
 
           return logToConsole;
         };
-        
+
         this.$get = [ '$injector', function ($injector) {
 
           var lastLog = null;

@@ -3,6 +3,8 @@ Angular Loggly Logger is a module which will decorate Angular's $log service, an
 
 
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
+![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg)](https://coveralls.io/r/ajbrown/angular-loggly-logger)
+
 
 
 ### Getting Started
@@ -16,8 +18,7 @@ bower install angular-loggly-logger
 Once configured (by including "logglyLogger" as a module dependency), the `$log`
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
-The plain text messages are sent into the "json.message" field with the decorated log while custom JSON objects are sent via "json.messageObj" field as Loggly only supports
-one type per field.
+The plain text messages are sent into the "json.message" field with the decorated log while custom JSON objects are sent via "json.messageObj" field as Loggly only supports one type per field.
 
 To use both the decorated $log and the LogglyLogger service, you must first
 configure it with an inputToken, which is done via the LogglyLoggerProvider:
@@ -129,4 +130,4 @@ Beware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any pr
 
 ## Contributing
 
-Contributins are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger), or code by creating a new pull request.  Please make sure your pull request targets the "develop" branch.
+Contributins are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger/issues), or code by creating a new pull request.  Please make sure your pull request targets the "develop" branch.
