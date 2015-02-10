@@ -1,6 +1,6 @@
 {
   "name": "angular-loggly-logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main" : "angular-loggly-logger.js",
   "keywords": ["angularjs", "loggly", "logging", "logger", "log"],
   "authors": [
