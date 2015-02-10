@@ -204,11 +204,11 @@
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level };
 
-              if(angular.isDefined(msg.stack)){
+              if(angular.isDefined(msg.stack || msg[0].stack)){
                 //handling console errors
                 if(logger.sendConsoleErrors() === true){
-                    sending.message = msg.message;
-                    sending.stack = msg.stack;
+                    sending.message = msg.message || msg[0].message;
+                    sending.stack = msg.stack || msg[0].stack;
                 }
                 else{
                   return;
