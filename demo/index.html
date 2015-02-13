@@ -1,19 +1,19 @@
 <!doctype html>
-<html ng-app="ngLoggly.demo">
+<html ng-app="logglyLogger.demo">
   <head>
-    
+
   </head>
   <body ng-controller="MainCtrl">
 
     <p>
-      Make sure you edit demo/app.js, and add a valid inputToken to the "logglyInputToenk" constant's value.!
+      Make sure you edit demo/app.js, and add a valid inputToken to the "logglyInputToken" constant's value.!
     </p>
-    
+
     <form name="form" novalidate>
       <p>
         <label>Message to send:</label><br/>
         <input ng-model="message" required/>
-      </p>  
+      </p>
 
       <button ng-click="logIt()" ng-disabled="form.$invalid">Log It!</button>
       <button ng-click="megaLogIt()" ng-disabled="form.$invalid">Mega Log It!</button>
