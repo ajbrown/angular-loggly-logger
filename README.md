@@ -1,5 +1,5 @@
 
-Angular Loggly Logger is a module which will decorate Angular's $log service, and provide a `LogglyLogger` service which can be used to manually send messages of any kind to the [Loggly](https://www.loggly.com) cloud log management service.
+Angular Loggly Logger is a module which will decorate Angular's $log service, and provide a `LogglyLogger` service which can be used to manually send messages of any kind to the [Loggly](https://www.loggly.com) cloud log management service. Check out Loggly's [Angular logging documentation](https://www.loggly.com/docs/angular-js-logs/) to learn more.
 
 
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
