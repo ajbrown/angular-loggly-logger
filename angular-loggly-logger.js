@@ -169,11 +169,11 @@
                 line: line,
                 col: col
               });
+
+              if (_onerror && typeof _onerror === 'function') {
+                _onerror.apply(window, arguments);
+              }
             };
-                
-            if (_onerror && typeof _onerror === 'function') {
-              _onerror.apply(window, arguments);
-            }
           };
 
           var wrapLogFunction = function(logFn, level, loggerName) {
