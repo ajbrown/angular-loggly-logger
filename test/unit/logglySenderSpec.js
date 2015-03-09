@@ -111,7 +111,7 @@ describe('logglyLogger Module:', function() {
       service.sendMessage(message);
 
       generatedURL = new URL(imageMock.src);
-      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
+      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
     });
 
     it('will use http if useHttps is set to false', function () {

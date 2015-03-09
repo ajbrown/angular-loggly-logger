@@ -23,7 +23,7 @@
         var extra = {};
         var includeCurrentUrl = false;
         var includeTimestamp = false;
-        var tag = 'angular';
+        var tag = null;
         var sendConsoleErrors = false;
         var logToConsole = true;
 
@@ -35,7 +35,7 @@
 
         var buildUrl = function ( data ) {
           var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + '/tag/'+ tag + '/.gif?PLAINTEXT=' + msg;
+          return (https ? 'https' : 'http') + endpoint + token + (tag ? '/tag/'+ tag : '') + '.gif?PLAINTEXT=' + msg;
         };
 
         this.setExtra = function (d) {
@@ -184,10 +184,29 @@
 
         $provide.decorator('$log', [ "$delegate", '$injector', function ( $delegate, $injector ) {
 
+          var logger = $injector.get('LogglyLogger');
+
+          // install a window error handler
+          if(logger.sendConsoleErrors() === true) {
+            var _onerror = window.onerror;
+            
+            //send console error messages to Loggly
+            window.onerror = function (msg, url, line, col) {
+              logger.sendMessage({ 
+                level : 'ERROR',
+                message: msg,
+                url: url,
+                line: line,
+                col: col
+              });
+
+              if (_onerror && typeof _onerror === 'function') {
+                _onerror.apply(window, arguments);
+              }
+            };
+          };
 
           var wrapLogFunction = function(logFn, level, loggerName) {
-
-            var logger = $injector.get('LogglyLogger');
 
             var wrappedFn = function () {
               var args = Array.prototype.slice.call(arguments);
@@ -204,17 +223,17 @@
               var msg = args.length == 1 ? args[0] : args;
               var sending = { level: level };
 
-              if(angular.isDefined(msg.stack || msg[0].stack)){
+              if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {
                 //handling console errors
                 if(logger.sendConsoleErrors() === true){
                     sending.message = msg.message || msg[0].message;
                     sending.stack = msg.stack || msg[0].stack;
                 }
-                else{
+                else {
                   return;
                 }
               }
-              else if(angular.isObject(msg)){
+              else if(angular.isObject(msg)) {
                 //handling JSON objects
                 sending = angular.extend({}, msg, sending);
               }
