@@ -189,10 +189,10 @@
           // install a window error handler
           if(logger.sendConsoleErrors() === true) {
             var _onerror = window.onerror;
-            
+
             //send console error messages to Loggly
             window.onerror = function (msg, url, line, col) {
-              logger.sendMessage({ 
+              logger.sendMessage({
                 level : 'ERROR',
                 message: msg,
                 url: url,
@@ -220,7 +220,7 @@
                 return;
               }
 
-              var msg = args.length == 1 ? args[0] : args;
+              var msg = (args.length == 1 ? args[0] : args) || {};
               var sending = { level: level };
 
               if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {

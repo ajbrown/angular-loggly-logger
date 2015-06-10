@@ -193,6 +193,20 @@ describe('logglyLogger Module:', function() {
 
     });
 
+    it( 'will not fail if the logged message is null or undefined', function() {
+        var undefinedMessage;
+        var nullMessage = null;
+
+        expect( function() {
+            $log.debug( undefinedMessage );
+        }).not.toThrow();
+
+        expect( function() {
+            $log.debug( nullMessage );
+        }).not.toThrow();
+
+    });
+
   });
 
 });
