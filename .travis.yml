@@ -7,7 +7,7 @@ deploy:
     api_key:
       secure: C07sCtkimrvDgQZZUVWjlPD/axfRAYJEWMYW6Cu5T1qSz1BZwKmXxNLJouKk1Q+jwlWVWNnJ0kOL/cUTN7oo1YaIsHbE7ufxJoHeyPnOu7oz0FRxYDplZ/3ukQteDHxZkIYjgzfgXWGXbEDoOfzT63+DsDMXQDn7CQrs6bXxv0E=
     on:
-      branches: master
+      branch: master
       tags: true
 
 before_script:
