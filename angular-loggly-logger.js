@@ -35,7 +35,7 @@
 
         var buildUrl = function ( data ) {
           var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + (tag ? '/tag/'+ tag : '') + '.gif?PLAINTEXT=' + msg;
+          return (https ? 'https' : 'http') + endpoint + token + (tag ? '/tag/'+ tag +'/': '') + '.gif?PLAINTEXT=' + msg;
         };
 
         this.setExtra = function (d) {
