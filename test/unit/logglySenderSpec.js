@@ -11,7 +11,7 @@ describe('logglyLogger Module:', function() {
     // Initialize the service provider
     // by injecting it to a fake module's config block
     var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
-    fakeModule.config( function (LogglyLoggerProvider) {
+    fakeModule.config( function(LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
     });
 
@@ -20,7 +20,7 @@ describe('logglyLogger Module:', function() {
 
     // Kickstart the injectors previously registered
     // with calls to angular.mock.module
-    inject(function () {});
+    inject(function() {});
   });
 
 
@@ -51,6 +51,16 @@ describe('logglyLogger Module:', function() {
         }
     });
 
+    it( 'can specify extra fields to be sent with each log message', function() {
+
+      var extra = { "test": "extra" };
+
+      logglyLoggerProvider.fields( extra );
+
+      expect( logglyLoggerProvider.fields()).toEqual( extra );
+
+    });
+
   });
 
   describe( 'LogglyLogger', function() {
@@ -58,7 +68,7 @@ describe('logglyLogger Module:', function() {
     var service, $log, imageMock;
 
     // helper function to parse payload of generated image url
-    // pass in instantiated instance of URL with the 'src' proprty
+    // pass in instantiated instance of URL with the 'src' property
     // of the mocked image as its argument. (e.g. new URL(imageMock.src))
 
     var parsePayload = function(constructedURL) {
@@ -134,7 +144,7 @@ describe('logglyLogger Module:', function() {
 
     it('will include the current url if includeUrl() is not set to false', function () {
       var token = 'test123456';
-      var message = { msg: 'A Test message' };
+      var message = { message: 'A Test message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
       var parsedPayload;
 
@@ -153,9 +163,58 @@ describe('logglyLogger Module:', function() {
 
     });
 
+    it( 'can set extra fields using the fields method', function() {
+      var extra = { appVersion: '1.1.0', browser: 'Chrome' };
+
+      expect( service.fields( extra )).toBe( extra );
+      expect( service.fields() ).toEqual( extra );
+    });
+
+
+    it( 'will include extra fields if set via provider and service', function() {
+      var parsedPayload;
+      var token = 'test123456';
+      var extra = { appVersion: '1.1.0', browser: 'Chrome' };
+      var message = 'A Test message';
+
+      logglyLoggerProvider.inputToken( token );
+
+
+      logglyLoggerProvider.fields( extra );
+      service.sendMessage( { message: message } );
+
+      parsedPayload = parsePayload(new URL(imageMock.src));
+      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message } );
+
+      extra.username = "baldrin";
+      service.fields( extra );
+      service.sendMessage( { message: message } );
+
+      parsedPayload = parsePayload(new URL(imageMock.src));
+      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message, username: "baldrin" } );
+
+    });
+
+
+    it( 'will include extra fields if set via the service', function() {
+      var parsedPayload;
+      var token = 'test123456';
+      var extra = { appVersion: '1.1.0', browser: 'Chrome' };
+      var message = 'A Test message';
+
+      logglyLoggerProvider.inputToken( token );
+      logglyLoggerProvider.fields( extra );
+
+      service.sendMessage( { message: message } );
+
+      parsedPayload = parsePayload(new URL(imageMock.src));
+      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message } );
+    });
+
+
     it( '$log has a logglySender attached', function() {
       var token = 'test123456';
-      var logMessage = 'A Test Log Message';
+      var logMessage = { message: 'A Test Log Message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
 
       logglyLoggerProvider.inputToken( token );
@@ -206,6 +265,7 @@ describe('logglyLogger Module:', function() {
         }).not.toThrow();
 
     });
+
 
   });
 
