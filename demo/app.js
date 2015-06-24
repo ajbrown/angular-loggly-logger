@@ -3,8 +3,7 @@
     angular.module( 'logglyLogger.demo', ['logglyLogger'] )
 
     .constant(
-        'logglyInputToken',
-        '<YOUR TOKEN>'
+        'logglyInputToken', '<token-here>'
     )
 
     .config( function( LogglyLoggerProvider, logglyInputToken ) {
@@ -20,13 +19,19 @@
 
     } )
 
-    .controller( 'MainCtrl', function( $scope, $log ) {
+    .controller( 'MainCtrl', function( $scope, $log, LogglyLogger) {
 
         $scope.inputToken = null;
         $scope.message = '';
+        $scope.extra = '{}';
 
         //We can also create named loggers, similar to log4j
         var megaLog = $log.getLogger( 'MegaLogger' );
+
+        $scope.updateExtra = function() {
+          LogglyLogger.fields( angular.fromJson( $scope.extra ) );
+          $log.info( "Updated fields:", LogglyLogger.fields() );
+        };
 
         $scope.logIt = function() {
             $log.info( $scope.message );
@@ -34,7 +39,7 @@
 
         $scope.megaLogIt = function() {
             megaLog.warn( $scope.message );
-        }
+        };
 
     })
 
