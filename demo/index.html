@@ -15,6 +15,12 @@
         <input ng-model="message" required/>
       </p>
 
+      <p>
+        <label>JSON fields to add:</label>
+        <input ng-model="extra"/>
+        <button ng-click="updateExtra()">Update Fields</button>
+      </p>
+
       <button ng-click="logIt()" ng-disabled="form.$invalid">Log It!</button>
       <button ng-click="megaLogIt()" ng-disabled="form.$invalid">Mega Log It!</button>
 
