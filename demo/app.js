@@ -3,8 +3,7 @@
     angular.module( 'logglyLogger.demo', ['logglyLogger'] )
 
     .constant(
-        'logglyInputToken',
-        'a3f1b26a-5d19-4553-a6e0-e7fb4bbdef8e'
+        'logglyInputToken', '<token-here>'
     )
 
     .config( function( LogglyLoggerProvider, logglyInputToken ) {
