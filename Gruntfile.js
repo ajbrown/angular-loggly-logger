@@ -2,6 +2,15 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
+        jshint: {
+            options: {
+                jshintrc: true
+            },
+            files: {
+                src: ['angular-loggly-logger.js']
+            }
+        },
+
         uglify: {
             options : {
                 sourceMap: true
@@ -13,7 +22,7 @@ module.exports = function(grunt) {
 
         karma: {
           unit: {
-            configFile: 'test/karma.conf.js',
+            configFile: 'test/karma.conf.js'
           },
           //continuous integration mode: run tests once in PhantomJS browser.
           travis: {
@@ -25,6 +34,12 @@ module.exports = function(grunt) {
 
       watch: {
 
+          //run JSHint on JS files
+          jshint: {
+              files: ['angular-loggly-logger.js'],
+              tasks: ['jshint']
+          },
+
           //run unit tests with karma (server needs to be already running)
           karma: {
               files: ['*.js', '!*.min.js'],
@@ -34,11 +49,12 @@ module.exports = function(grunt) {
 
     });
 
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
 
-    grunt.registerTask('default', ['uglify'] );
+    grunt.registerTask('default', ['jshint','uglify'] );
     grunt.registerTask('test', [ 'karma:travis' ] );
     grunt.registerTask('test-all', ['karma:unit'] );
 };
