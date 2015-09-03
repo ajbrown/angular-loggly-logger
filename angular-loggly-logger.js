@@ -14,9 +14,6 @@
     .provider( 'LogglyLogger', function() {
       var self = this;
 
-      var logSuccessHandler;
-      var logFailureHandler;
-
       var logLevels = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
 
       var https = true;
@@ -160,7 +157,7 @@
           var sentData = angular.extend({}, extra, data);
 
           if (includeCurrentUrl) {
-            sentData.url = $location.absUrl()
+            sentData.url = $location.absUrl();
           }
 
           if( includeTimestamp ) {
@@ -175,9 +172,9 @@
         };
 
         return {
-          lastLog: function(){ return lastLog },
-          sendConsoleErrors: function(){ return sendConsoleErrors },
-          level : function() { return level },
+          lastLog: function(){ return lastLog; },
+          sendConsoleErrors: function(){ return sendConsoleErrors; },
+          level : function() { return level; },
           isLevelEnabled : self.isLevelEnabled,
           attach: attach,
           sendMessage: sendMessage,
@@ -194,7 +191,7 @@
             }
             return self.fields();
           }
-        }
+        };
       }];
 
     } );
@@ -241,7 +238,7 @@
               return;
             }
 
-            var msg = (args.length == 1 ? args[0] : args) || {};
+            var msg = (args.length === 1 ? args[0] : args) || {};
             var sending = { level: level };
 
             if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {
@@ -264,7 +261,7 @@
             }
 
             if( loggerName ) {
-              sending.logger = msg
+              sending.logger = msg;
             }
 
             //Send the message to through the loggly sender
@@ -292,7 +289,7 @@
             info:   wrapLogFunction( _$log.info, 'INFO', name ),
             warn:   wrapLogFunction( _$log.warn, 'WARN', name ),
             error:  wrapLogFunction( _$log.error, 'ERROR', name )
-          }
+          };
         };
 
         //wrap the existing API
