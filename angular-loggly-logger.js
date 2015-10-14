@@ -174,6 +174,14 @@
         var attach = function() {
         };
 
+        var inputToken = function(s) {
+          if (angular.isDefined(s)) {
+            token = s;
+          }
+
+          return token;
+        };
+
         return {
           lastLog: function(){ return lastLog },
           sendConsoleErrors: function(){ return sendConsoleErrors },
@@ -182,6 +190,7 @@
           attach: attach,
           sendMessage: sendMessage,
           logToConsole: logToConsole,
+          inputToken: inputToken,
 
           /**
            * Get or set the fields to be sent with all logged events.
