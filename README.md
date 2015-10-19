@@ -25,18 +25,18 @@ configure it with an inputToken, which is done via the LogglyLoggerProvider:
 ```javascript
 angular.module( 'myApp', ['logglyLogger'] )
 
-  .config( function( LogglyLoggerProvider ) {
+  .config(["LogglyLoggerProvider", function( LogglyLoggerProvider ) {
     LogglyLoggerProvider.inputToken( '<loggly input token here>' );
-  } );
+  } ]);
 
-  .run( function( LogglyLogger, $log ) {
+  .run(["LogglyLogger", "$log", function( LogglyLogger, $log ) {
 
     //This will be sent to both the console and Loggly
     $log.info( "I'm a little teapot." );
 
     //This will be sent to loggly only
     LogglyLogger.sendMessage( 'Short and Stout.' )
-  }
+  }])
 
 ```
 
@@ -130,7 +130,7 @@ will include the key/values provided with all messages, plus the data to be sent
 Extra fields can also be added at runtime using the `LogglyLogger` service:
 
 ```javascript
-  app.controller( 'MainCtrl', function( $scope, $log, LogglyLogger ) {
+  app.controller( 'MainCtrl', ["$scope", "$log", "LogglyLogger", function( $scope, $log, LogglyLogger ) {
     
     logglyLogger.fields( { username: "foobar" } );
     
@@ -139,7 +139,7 @@ Extra fields can also be added at runtime using the `LogglyLogger` service:
     $log.info( 'All is good!' );
     
   >> { appVersion: 1.1.0, browser: 'Chrome', username: 'foobar', level: 'WARN', message: 'All is good', url: 'http://google.com' }
-  }
+  }])
 
 ```
 
