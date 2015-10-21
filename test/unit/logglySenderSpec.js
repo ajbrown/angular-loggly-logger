@@ -266,6 +266,12 @@ describe('logglyLogger Module:', function() {
 
     });
 
+    it( 'can update the Loggly token', function() {
+      logglyLoggerProvider.inputToken('');
+      service.inputToken('foo');
+      expect(logglyLoggerProvider.inputToken()).toEqual('foo');
+    });
+
 
   });
 
