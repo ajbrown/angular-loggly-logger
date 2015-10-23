@@ -23,6 +23,7 @@
       var tag = null;
       var sendConsoleErrors = false;
       var logToConsole = true;
+      var loggingEnabled = true;
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -124,6 +125,15 @@
         return logLevels.indexOf( name.toUpperCase() ) >= level;
       };
 
+      this.loggingEnabled = function (flag) {
+          if (angular.isDefined(flag)) {
+              loggingEnabled = !!flag;
+              return self;
+          }
+
+          return loggingEnabled;
+      };
+
 
       this.logToConsole = function (flag) {
         if (angular.isDefined(flag)) {
@@ -145,7 +155,7 @@
          */
         var sendMessage = function (data) {
           //If a token is not configured, don't do anything.
-          if (!token) {
+          if (!token || !loggingEnabled) {
             return;
           }
 
@@ -183,6 +193,7 @@
           lastLog: function(){ return lastLog; },
           sendConsoleErrors: function(){ return sendConsoleErrors; },
           level : function() { return level; },
+          loggingEnabled: self.loggingEnabled,
           isLevelEnabled : self.isLevelEnabled,
           attach: attach,
           sendMessage: sendMessage,
@@ -243,7 +254,7 @@
             }
 
             // Skip messages that have a level that's lower than the configured level for this logger.
-            if( !logger.isLevelEnabled( level ) ) {
+            if(!logger.loggingEnabled() || !logger.isLevelEnabled( level ) ) {
               return;
             }
 
