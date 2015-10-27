@@ -252,6 +252,39 @@ describe('logglyLogger Module:', function() {
 
     });
 
+    it( 'will not send messages if logs are not enabled', function() {
+        var token = 'test123456';
+        var message = { message: 'A test message' };
+        var url = 'https://logs-01.loggly.com/inputs/' + token;
+        var tag = 'logglyLogger';
+        var generatedURL;
+
+        logglyLoggerProvider.inputToken(token);
+        logglyLoggerProvider.includeUrl(false);
+        logglyLoggerProvider.loggingEnabled(false);
+        logglyLoggerProvider.inputTag(tag);
+
+        service.sendMessage(message);
+        expect(imageMock).toBe(undefined);
+    })
+
+    it( 'will disable logs after config had them enabled and not send messages', function() {
+        var token = 'test123456';
+        var message = { message: 'A test message' };
+        var url = 'https://logs-01.loggly.com/inputs/' + token;
+        var tag = 'logglyLogger';
+        var generatedURL;
+
+        logglyLoggerProvider.inputToken(token);
+        logglyLoggerProvider.includeUrl(false);
+        logglyLoggerProvider.loggingEnabled(true);
+        logglyLoggerProvider.inputTag(tag);
+
+        service.loggingEnabled(false);
+        service.sendMessage(message);
+        expect(imageMock).toBe(undefined);
+    })
+
     it( 'will not fail if the logged message is null or undefined', function() {
         var undefinedMessage;
         var nullMessage = null;
