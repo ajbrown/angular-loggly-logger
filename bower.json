@@ -1,27 +1,26 @@
 {
   "name": "angular-loggly-logger",
-  "version": "0.1.3",
-  "main" : "angular-loggly-logger.js",
+  "version": "0.2.0",
+  "main": "index.js",
   "keywords": ["angularjs", "loggly", "logging", "logger", "log"],
   "authors": [
     { "name": "A.J. Brown", "email": "aj@ajbrown.org" }
   ],
+  "ignore": [
+    "demo",
+    "test",
+    "Gruntfile.js",
+    "package.json",
+    "karma.conf.js",
+    "karma-e2e.conf.js",
+    "node_modules",
+    "bower_components"
+  ],
   "dependencies": {
     "angular": "~1.3.16"
-    },
-    "devDependencies": {
-        "angular-mocks": "~1.3.16",
-        "angular-loader": "~1.3.16"
-    },
-    "main" : "angular-loggly-logger.js",
-    "ignore": [
-        "demo",
-        "test",
-        "Gruntfile.js",
-        "package.json",
-        "karma.conf.js",
-        "karma-e2e.conf.js",
-        "node_modules",
-        "bower_components"
-    ]
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.3.16",
+    "angular-loader": "~1.3.16"
+  }
 }
