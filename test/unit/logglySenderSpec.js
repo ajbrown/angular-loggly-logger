@@ -13,9 +13,9 @@ describe('logglyLogger Module:', function() {
     var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
     fakeModule.config( function(LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
-        });
+    });
 
-        // Initialize test.app injector
+    // Initialize test.app injector
     module('logglyLogger', 'testing.harness');
 
     // Kickstart the injectors previously registered
@@ -281,60 +281,6 @@ describe('logglyLogger Module:', function() {
 
     });
 
-     it( 'will not send messages if logs are not enabled', function () {
-            var token = 'test123456';
-            var message = { message: 'A test message' };
-            var expectMessage = { message: 'A test message' };
-            var url = 'https://logs-01.loggly.com/inputs/' + token;
-            var tag = 'logglyLogger';
-            var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
-            var generatedURL;
-            
-            logglyLoggerProvider.inputToken(token);
-            logglyLoggerProvider.includeUrl(false);
-            logglyLoggerProvider.loggingEnabled(false);
-            logglyLoggerProvider.inputTag(tag);
-            
-            var forbiddenCallTriggered = false;
-            $httpBackend
-            .when(url)
-            .respond(function () {
-                forbiddenCallTriggered = true;
-                return [400, ''];
-            });
-            
-            service.sendMessage("A test message");
-            // Let test fail when request was triggered.
-            expect(forbiddenCallTriggered).toBe(false);
-       });
-        
-        it('will disable logs after config had them enabled and not send messages', function () {
-            var token = 'test123456';
-            var message = { message: 'A test message' };
-            var expectMessage = { message: 'A test message' };
-            var url = 'https://logs-01.loggly.com/inputs/' + token;
-            var tag = 'logglyLogger';
-            var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
-            var generatedURL;
-            
-            logglyLoggerProvider.inputToken(token);
-            logglyLoggerProvider.includeUrl(false);
-            logglyLoggerProvider.loggingEnabled(true);
-            logglyLoggerProvider.inputTag(tag);
-            
-            $httpBackend
-            .expectPOST(testURL, expectMessage)
-            .respond(function (method, url, data) {
-                generatedURL = url;
-                return [200, "", {}];
-       });
-            
-            service.sendMessage(message);
-            $httpBackend.flush();
-            
-            expect(generatedURL).toEqual(testURL);
-     });
-
     it( 'will not send messages for levels that are not enabled', function() {
         var logMessage = 'A Test Log Message';
 
@@ -358,6 +304,58 @@ describe('logglyLogger Module:', function() {
         }
 
     });
+
+    it( 'will not send messages if logs are not enabled', function() {
+        var token = 'test123456';
+        var message = { message: 'A test message' };
+        var expectMessage = { message: 'A test message' };
+        var url = 'https://logs-01.loggly.com/inputs/' + token;
+        var tag = 'logglyLogger';
+        var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
+        var generatedURL;
+
+        logglyLoggerProvider.inputToken(token);
+        logglyLoggerProvider.includeUrl(false);
+        logglyLoggerProvider.loggingEnabled(false);
+        logglyLoggerProvider.inputTag(tag);
+
+        var forbiddenCallTriggered = false;
+        $httpBackend
+        .when(url)
+        .respond(function () {
+            forbiddenCallTriggered = true;
+            return [400, ''];
+         });
+       service.sendMessage("A test message");
+         // Let test fail when request was triggered.
+         expect(forbiddenCallTriggered).toBe(false);
+        });
+
+    it( 'will disable logs after config had them enabled and not send messages', function() {
+        var token = 'test123456';
+        var message = { message: 'A test message' };
+        var expectMessage = { message: 'A test message' };
+        var url = 'https://logs-01.loggly.com/inputs/' + token;
+        var tag = 'logglyLogger';
+        var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
+        var generatedURL;
+
+        logglyLoggerProvider.inputToken(token);
+        logglyLoggerProvider.includeUrl(false);
+        logglyLoggerProvider.loggingEnabled(true);
+        logglyLoggerProvider.inputTag(tag);
+
+        $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function (method, url, data) {
+            generatedURL = url;
+            return [200, "", {}];
+        });
+        
+        service.sendMessage(message);
+        $httpBackend.flush();
+        expect(generatedURL).toEqual(testURL);
+     });
 
     it( 'will not fail if the logged message is null or undefined', function() {
         var undefinedMessage;
