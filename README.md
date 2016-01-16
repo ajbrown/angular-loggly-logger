@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
-[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=develop)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=master)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=master)
 [![Join the chat at https://gitter.im/ajbrown/angular-loggly-logger](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ajbrown/angular-loggly-logger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
@@ -117,7 +117,7 @@ The following configuration options are available.
 
 ### Sending JSON Fields
 
-You can also default some "extra/default" information to be sent with each log message.  When this is set, `LogglyLogger` 
+You can also default some "extra/default" information to be sent with each log message.  When this is set, `LogglyLogger`
 will include the key/values provided with all messages, plus the data to be sent for each specific logging request.
 
 ```javascript
@@ -135,13 +135,13 @@ Extra fields can also be added at runtime using the `LogglyLogger` service:
 
 ```javascript
   app.controller( 'MainCtrl', ["$scope", "$log", "LogglyLogger", function( $scope, $log, LogglyLogger ) {
-    
+
     logglyLogger.fields( { username: "foobar" } );
-    
+
     //...
-    
+
     $log.info( 'All is good!' );
-    
+
   >> { appVersion: 1.1.0, browser: 'Chrome', username: 'foobar', level: 'WARN', message: 'All is good', url: 'http://google.com' }
   }])
 
