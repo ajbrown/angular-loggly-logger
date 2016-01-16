@@ -1,2 +1,3 @@
-require('angular-loggly-logger');
+require('angular');
+require('./angular-loggly-logger');
 module.exports = 'logglyLogger';
