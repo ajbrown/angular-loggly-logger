@@ -65,37 +65,20 @@ describe('logglyLogger Module:', function() {
 
   describe( 'LogglyLogger', function() {
 
-    var service, $log, imageMock;
-
-    // helper function to parse payload of generated image url
-    // pass in instantiated instance of URL with the 'src' property
-    // of the mocked image as its argument. (e.g. new URL(imageMock.src))
-
-    var parsePayload = function(constructedURL) {
-      var searchPayload = constructedURL.search.slice('?PLAINTEXT='.length);
-      return angular.fromJson(decodeURIComponent(searchPayload));
-    };
+    var service, $log, $httpBackend;
 
     beforeEach(function () {
       inject(function ($injector) {
+      $log = $injector.get('$log');
+        $httpBackend = $injector.get('$httpBackend');
         service = $injector.get('LogglyLogger');
         service.attach();
-
-        $log = $injector.get('$log');
+        });
       });
-
-      // return a mock constructed Image when 'new Image()' get called
-      // in the service. otherwise, when you call service.sendMessage,
-      // the app actually makes a get request to the specified url
-
-      spyOn(window, 'Image').and.callFake(function() {
-        imageMock = { src: {} }
-        return imageMock;
-      });
-    });
 
     afterEach(function () {
-      imageMock = undefined;
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
     });
 
     it('should be registered', function () {
@@ -103,40 +86,68 @@ describe('logglyLogger Module:', function() {
     });
 
     it('will not send a message to loggly if a token is not specified', function () {
+            var url = 'https://logs-01.loggly.com';
+            var forbiddenCallTriggered = false;
+            $httpBackend
+            .when(url)
+            .respond(function () {
+                forbiddenCallTriggered = true;
+                return [400, ''];
+            });
+            
       service.sendMessage("A test message");
-      expect(imageMock).toBe(undefined);
+      // Let test fail when request was triggered.
+      expect(forbiddenCallTriggered).toBe(false);
     });
 
-    it('will send a message to loggly when properly configured', function () {
+    it('will send a message to loggly only when properly configured', function () {
       var token = 'test123456';
       var message = { message: 'A test message' };
+      var expectMessage = { message: 'A test message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
       var tag = 'logglyLogger';
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
       var generatedURL;
 
       logglyLoggerProvider.inputToken(token);
       logglyLoggerProvider.includeUrl(false);
       logglyLoggerProvider.inputTag(tag);
 
-      service.sendMessage(message);
+      $httpBackend
+      .expectPOST(testURL, expectMessage)
+      .respond(function (method, url, data) {
+      generatedURL = url;
+      return [200, "", {}];
+      });
 
-      generatedURL = new URL(imageMock.src);
-      expect(generatedURL.href).toEqual('https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/.gif?PLAINTEXT=%7B%22message%22%3A%22A%20test%20message%22%7D');
+      service.sendMessage(message);
+      $httpBackend.flush();
+
+      expect(generatedURL).toEqual(testURL);
     });
 
     it('will use http if useHttps is set to false', function () {
       var token = 'test123456';
       var message = { message: 'A message' };
+      var expectMessage = { message: 'A message' };
       var url = 'http://logs-01.loggly.com/inputs/' + token;
+      var testURL = 'http://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
       var generatedURL;
 
       logglyLoggerProvider.inputToken(token);
       logglyLoggerProvider.useHttps(false);
       logglyLoggerProvider.includeUrl(false);
 
+      $httpBackend
+      .expectPOST(testURL, expectMessage)
+      .respond(function (method, url, data) {
+      generatedURL = new URL(url);
+      return [200, "", {}];
+      });
+            
       service.sendMessage(message);
 
-      generatedURL = new URL(imageMock.src);
+      $httpBackend.flush();
 
       expect(generatedURL.protocol).toEqual('http:');
 
@@ -145,8 +156,10 @@ describe('logglyLogger Module:', function() {
     it('will include the current url if includeUrl() is not set to false', function () {
       var token = 'test123456';
       var message = { message: 'A Test message' };
+      var expectMessage = { message: 'A Test message', url: 'http://bloggly.com' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
-      var parsedPayload;
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+      var payload;
 
       inject(function ($injector) {
         // mock browser url
@@ -156,10 +169,17 @@ describe('logglyLogger Module:', function() {
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( true );
 
+            $httpBackend
+            .expectPOST(testURL, expectMessage)
+            .respond(function (method, url, data) {
+                payload = JSON.parse(data);
+                return [200, "", {}];
+        });
+            
       service.sendMessage( message );
 
-      parsedPayload = parsePayload(new URL(imageMock.src));
-      expect(parsedPayload.url).toEqual('http://bloggly.com');
+      $httpBackend.flush();
+      expect(payload.url).toEqual('http://bloggly.com');
 
     });
 
@@ -172,58 +192,91 @@ describe('logglyLogger Module:', function() {
 
 
     it( 'will include extra fields if set via provider and service', function() {
-      var parsedPayload;
+      var payload, payload2;
       var token = 'test123456';
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
       var message = 'A Test message';
+      var expectMessage = { appVersion: "1.1.0", browser: "Chrome", message: "A Test message" };
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
       logglyLoggerProvider.inputToken( token );
 
 
       logglyLoggerProvider.fields( extra );
+      $httpBackend
+      .expectPOST(testURL, expectMessage)
+      .respond(function (method, url, data) {
+      payload = JSON.parse(data);
+      return [200, "", {}];
+        });
       service.sendMessage( { message: message } );
 
-      parsedPayload = parsePayload(new URL(imageMock.src));
-      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message } );
+       $httpBackend.flush();
+       expect(payload).toEqual({ appVersion: '1.1.0', browser: 'Chrome', message: message });     
+
+       var expectMessage2 = { appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin', message: 'A Test message' };
 
       extra.username = "baldrin";
       service.fields( extra );
+      $httpBackend
+      .expectPOST(testURL, expectMessage2)
+      .respond(function (method, url, data) {
+        payload2 = JSON.parse(data);
+        return [200, "", {}];
+        });
       service.sendMessage( { message: message } );
 
-      parsedPayload = parsePayload(new URL(imageMock.src));
-      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message, username: "baldrin" } );
+      $httpBackend.flush();
+      expect(payload2).toEqual({ appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin', message: message });
 
     });
 
 
     it( 'will include extra fields if set via the service', function() {
-      var parsedPayload;
+      var payload;
       var token = 'test123456';
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
       var message = 'A Test message';
+      var expectMessage = { appVersion: '1.1.0', browser: 'Chrome', message: message };
 
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.fields( extra );
 
+      $httpBackend
+      .expectPOST(testURL, expectMessage)
+      .respond(function (method, url, data) {
+       payload = JSON.parse(data);
+       return [200, "", {}];
+     });
+
       service.sendMessage( { message: message } );
 
-      parsedPayload = parsePayload(new URL(imageMock.src));
-      expect(parsedPayload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message } );
+      $httpBackend.flush();
+      expect(payload).toEqual( { appVersion: '1.1.0', browser: 'Chrome', message: message });
     });
-
 
     it( '$log has a logglySender attached', function() {
       var token = 'test123456';
       var logMessage = { message: 'A Test Log Message' };
       var url = 'https://logs-01.loggly.com/inputs/' + token;
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+      var payload, expectMessage;
 
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.includeUrl( false );
 
       angular.forEach( levels, function (level) {
+        expectMessage = { message: 'A Test Log Message', level: level };
+        $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function (method, url, data) {
+        payload = JSON.parse(data);
+        return [200, "", {}];
+        });
         $log[level.toLowerCase()].call($log, logMessage);
-        var parsedPayload = parsePayload(new URL(imageMock.src));
-        expect(parsedPayload.level).toEqual(level);
+        $httpBackend.flush();
+        expect(payload.level).toEqual(level);
       });
 
     });
@@ -255,8 +308,10 @@ describe('logglyLogger Module:', function() {
     it( 'will not send messages if logs are not enabled', function() {
         var token = 'test123456';
         var message = { message: 'A test message' };
+        var expectMessage = { message: 'A test message' };
         var url = 'https://logs-01.loggly.com/inputs/' + token;
         var tag = 'logglyLogger';
+        var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
         var generatedURL;
 
         logglyLoggerProvider.inputToken(token);
@@ -264,15 +319,25 @@ describe('logglyLogger Module:', function() {
         logglyLoggerProvider.loggingEnabled(false);
         logglyLoggerProvider.inputTag(tag);
 
-        service.sendMessage(message);
-        expect(imageMock).toBe(undefined);
-    })
+        var forbiddenCallTriggered = false;
+        $httpBackend
+        .when(url)
+        .respond(function () {
+            forbiddenCallTriggered = true;
+            return [400, ''];
+         });
+       service.sendMessage("A test message");
+         // Let test fail when request was triggered.
+         expect(forbiddenCallTriggered).toBe(false);
+        });
 
     it( 'will disable logs after config had them enabled and not send messages', function() {
         var token = 'test123456';
         var message = { message: 'A test message' };
+        var expectMessage = { message: 'A test message' };
         var url = 'https://logs-01.loggly.com/inputs/' + token;
         var tag = 'logglyLogger';
+        var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/logglyLogger/';
         var generatedURL;
 
         logglyLoggerProvider.inputToken(token);
@@ -280,10 +345,17 @@ describe('logglyLogger Module:', function() {
         logglyLoggerProvider.loggingEnabled(true);
         logglyLoggerProvider.inputTag(tag);
 
-        service.loggingEnabled(false);
+        $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function (method, url, data) {
+            generatedURL = url;
+            return [200, "", {}];
+        });
+        
         service.sendMessage(message);
-        expect(imageMock).toBe(undefined);
-    })
+        $httpBackend.flush();
+        expect(generatedURL).toEqual(testURL);
+     });
 
     it( 'will not fail if the logged message is null or undefined', function() {
         var undefinedMessage;

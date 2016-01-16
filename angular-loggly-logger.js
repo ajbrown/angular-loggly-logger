@@ -31,9 +31,8 @@
       var token = null;
       var endpoint = '://logs-01.loggly.com/inputs/';
 
-        var buildUrl = function ( data ) {
-          var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + (tag ? '/tag/'+ tag +'/': '') + '.gif?PLAINTEXT=' + msg;
+        var buildUrl = function () {
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/' + (tag ? tag : 'AngularJS' ) + '/'
         };
 
       this.setExtra = function (d) {
@@ -161,6 +160,8 @@
 
           //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
           var $location = $injector.get( '$location' );
+		   //we're injecting $http
+          var $http = $injector.get( '$http' );
 
           lastLog = new Date();
 
@@ -175,7 +176,16 @@
           }
 
           //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
-          new Image().src = buildUrl(sentData);
+           //Set header
+          var config = {
+            headers: {
+             'Content-Type': 'text/plain'
+            }
+          };
+          
+          
+          //Ajax call to send data to loggly
+          $http.post(buildUrl(),sentData,config);
         };
 
         var attach = function() {
