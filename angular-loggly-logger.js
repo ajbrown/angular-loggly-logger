@@ -14,9 +14,6 @@
     .provider( 'LogglyLogger', function() {
       var self = this;
 
-      var logSuccessHandler;
-      var logFailureHandler;
-
       var logLevels = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
 
       var https = true;
@@ -26,6 +23,7 @@
       var tag = null;
       var sendConsoleErrors = false;
       var logToConsole = true;
+      var loggingEnabled = true;
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -33,9 +31,8 @@
       var token = null;
       var endpoint = '://logs-01.loggly.com/inputs/';
 
-        var buildUrl = function ( data ) {
-          var msg = encodeURIComponent( angular.toJson( data ) );
-          return (https ? 'https' : 'http') + endpoint + token + (tag ? '/tag/'+ tag +'/': '') + '.gif?PLAINTEXT=' + msg;
+        var buildUrl = function () {
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/' + (tag ? tag : 'AngularJS' ) + '/'
         };
 
       this.setExtra = function (d) {
@@ -127,6 +124,15 @@
         return logLevels.indexOf( name.toUpperCase() ) >= level;
       };
 
+      this.loggingEnabled = function (flag) {
+          if (angular.isDefined(flag)) {
+              loggingEnabled = !!flag;
+              return self;
+          }
+
+          return loggingEnabled;
+      };
+
 
       this.logToConsole = function (flag) {
         if (angular.isDefined(flag)) {
@@ -148,19 +154,21 @@
          */
         var sendMessage = function (data) {
           //If a token is not configured, don't do anything.
-          if (!token) {
+          if (!token || !loggingEnabled) {
             return;
           }
 
           //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
           var $location = $injector.get( '$location' );
+		   //we're injecting $http
+          var $http = $injector.get( '$http' );
 
           lastLog = new Date();
 
           var sentData = angular.extend({}, extra, data);
 
           if (includeCurrentUrl) {
-            sentData.url = $location.absUrl()
+            sentData.url = $location.absUrl();
           }
 
           if( includeTimestamp ) {
@@ -168,20 +176,39 @@
           }
 
           //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
-          new Image().src = buildUrl(sentData);
+           //Set header
+          var config = {
+            headers: {
+             'Content-Type': 'text/plain'
+            }
+          };
+          
+          
+          //Ajax call to send data to loggly
+          $http.post(buildUrl(),sentData,config);
         };
 
         var attach = function() {
         };
 
+        var inputToken = function(s) {
+          if (angular.isDefined(s)) {
+            token = s;
+          }
+
+          return token;
+        };
+
         return {
-          lastLog: function(){ return lastLog },
-          sendConsoleErrors: function(){ return sendConsoleErrors },
-          level : function() { return level },
+          lastLog: function(){ return lastLog; },
+          sendConsoleErrors: function(){ return sendConsoleErrors; },
+          level : function() { return level; },
+          loggingEnabled: self.loggingEnabled,
           isLevelEnabled : self.isLevelEnabled,
           attach: attach,
           sendMessage: sendMessage,
           logToConsole: logToConsole,
+          inputToken: inputToken,
 
           /**
            * Get or set the fields to be sent with all logged events.
@@ -194,7 +221,7 @@
             }
             return self.fields();
           }
-        }
+        };
       }];
 
     } );
@@ -237,11 +264,11 @@
             }
 
             // Skip messages that have a level that's lower than the configured level for this logger.
-            if( !logger.isLevelEnabled( level ) ) {
+            if(!logger.loggingEnabled() || !logger.isLevelEnabled( level ) ) {
               return;
             }
 
-            var msg = (args.length == 1 ? args[0] : args) || {};
+            var msg = (args.length === 1 ? args[0] : args) || {};
             var sending = { level: level };
 
             if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {
@@ -264,7 +291,7 @@
             }
 
             if( loggerName ) {
-              sending.logger = msg
+              sending.logger = msg;
             }
 
             //Send the message to through the loggly sender
@@ -292,7 +319,7 @@
             info:   wrapLogFunction( _$log.info, 'INFO', name ),
             warn:   wrapLogFunction( _$log.warn, 'WARN', name ),
             error:  wrapLogFunction( _$log.error, 'ERROR', name )
-          }
+          };
         };
 
         //wrap the existing API
