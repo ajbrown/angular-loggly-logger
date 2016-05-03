@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
-[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=master)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=master)
+[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=develop)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=develop)
 [![Join the chat at https://gitter.im/ajbrown/angular-loggly-logger](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ajbrown/angular-loggly-logger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
