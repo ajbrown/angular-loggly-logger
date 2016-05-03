@@ -32,7 +32,7 @@
       var endpoint = '://logs-01.loggly.com/inputs/';
 
         var buildUrl = function () {
-          return (https ? 'https' : 'http') + endpoint + token + '/tag/' + (tag ? tag : 'AngularJS' ) + '/'
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/' + (tag ? tag : 'AngularJS' ) + '/';
         };
 
       this.setExtra = function (d) {
@@ -180,10 +180,11 @@
           var config = {
             headers: {
              'Content-Type': 'text/plain'
-            }
+            },
+            withCredentials: false
           };
-          
-          
+
+
           //Ajax call to send data to loggly
           $http.post(buildUrl(),sentData,config);
         };

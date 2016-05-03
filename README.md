@@ -150,6 +150,9 @@ Extra fields can also be added at runtime using the `LogglyLogger` service:
 
 Beware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any properties in your `obj` that are the same as your `extra` will be overwritten.  
 
+## ChangeLog
+- v0.2.2 - Fixes preflight cross origin issues.
+
 
 ## Contributing
 

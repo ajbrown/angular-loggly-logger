@@ -3,7 +3,7 @@
     angular.module( 'logglyLogger.demo', ['logglyLogger'] )
 
     .constant(
-        'logglyInputToken', '<token-here>'
+        'logglyInputToken', ''
     )
 
     .config( function( LogglyLoggerProvider, logglyInputToken ) {
@@ -13,15 +13,15 @@
             .useHttps( true )
             .includeTimestamp( true )
             .includeUrl( true )
-            .sendConsoleErrors(true)
-            .logToConsole(true)
+            .sendConsoleErrors( true )
+            .logToConsole( true )
         ;
 
     } )
 
-    .controller( 'MainCtrl', function( $scope, $log, LogglyLogger) {
+    .controller( 'MainCtrl', function( $scope, $log, LogglyLogger, logglyInputToken ) {
 
-        $scope.inputToken = null;
+        $scope.inputToken = logglyInputToken;
         $scope.message = '';
         $scope.extra = '{}';
 
