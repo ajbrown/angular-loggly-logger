@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/ajbrown/angular-loggly-logger.svg)](https://travis-ci.org/ajbrown/angular-loggly-logger)
-[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=develop)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/ajbrown/angular-loggly-logger/badge.svg?branch=master)](https://coveralls.io/r/ajbrown/angular-loggly-logger?branch=master)
 [![Join the chat at https://gitter.im/ajbrown/angular-loggly-logger](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ajbrown/angular-loggly-logger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
@@ -156,4 +156,4 @@ Beware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any pr
 
 ## Contributing
 
-Contributions are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger/issues), or code by creating a new pull request.  Please make sure your pull request targets the "develop" branch.
+Contributions are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger/issues), or code by creating a new pull request.  Please make sure your pull request targets the "master" branch.
