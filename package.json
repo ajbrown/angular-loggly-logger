@@ -1,6 +1,6 @@
 {
   "name": "angular-loggly-logger",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "index.js",
   "description": "An AngularJs service and $log decorator for Loggly",
   "repository": {
@@ -47,6 +47,7 @@
     "update-index-async": "node -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + cat('bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
   },
   "dependencies": {
-    "angular": "^1.5.5"
+    "angular": "^1.5.5",
+    "angular-mocks": "^1.5.5"
   }
 }
