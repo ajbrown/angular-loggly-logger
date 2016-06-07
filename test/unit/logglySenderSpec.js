@@ -183,6 +183,31 @@ describe('logglyLogger Module:', function() {
 
     });
 
+    it('will include the current userAgent if includeUserAgent() is not set to false', function () {
+      var token = 'test123456';
+      var message = { message: 'A Test message' };
+      var expectMessage = { message: 'A Test message', userAgent: window.navigator.userAgent };
+      var url = 'https://logs-01.loggly.com/inputs/' + token;
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+      var payload;
+
+      logglyLoggerProvider.inputToken( token );
+      logglyLoggerProvider.includeUserAgent( true );
+
+      $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function (method, url, data) {
+          payload = JSON.parse(data);
+          return [200, "", {}];
+        });
+
+      service.sendMessage( message );
+
+      $httpBackend.flush();
+      expect(payload.userAgent).toEqual(window.navigator.userAgent);
+
+    });
+
     it( 'can set extra fields using the fields method', function() {
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
 

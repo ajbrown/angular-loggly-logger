@@ -20,6 +20,7 @@
       var extra = {};
       var includeCurrentUrl = false;
       var includeTimestamp = false;
+      var includeUserAgent = false;
       var tag = null;
       var sendConsoleErrors = false;
       var logToConsole = true;
@@ -93,6 +94,15 @@
         }
 
         return includeTimestamp;
+      };
+
+      this.includeUserAgent = function (flag) {
+        if (angular.isDefined(flag)) {
+          includeUserAgent = !!flag;
+          return self;
+        }
+
+        return includeUserAgent;
       };
 
       this.inputTag = function (usrTag){
@@ -169,6 +179,7 @@
           }
 
           //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
+          var $window = $injector.get( '$window' );
           var $location = $injector.get( '$location' );
 		   //we're injecting $http
           var $http = $injector.get( '$http' );
@@ -183,6 +194,10 @@
 
           if( includeTimestamp ) {
             sentData.timestamp = lastLog.toISOString();
+          }
+
+          if( includeUserAgent ) {
+            sentData.userAgent = $window.navigator.userAgent;
           }
 
           //Loggly's API doesn't send us cross-domain headers, so we can't interact directly

@@ -96,6 +96,10 @@ The following configuration options are available.
     // should the value of $location.absUrl() be sent as a "url" key in the
     // message object that's sent to loggly?  Default is false.
     .includeUrl( false )
+    
+    // should the value of $window.navigator.userAgent be sent as a "userAgent" key in the
+    // message object that's sent to loggly?  Default is false.
+    .includeUserAgent( false )
 
     // should the current timestamp be included? Default is false.
     .includeTimestamp( false )
@@ -124,7 +128,8 @@ The following configuration options are available.
       message: 'msg',
       stack: 'stk',
       timestamp: 'ts',
-      url: 'url'
+      url: 'url',
+      userAgent: 'userAgent'
     })
 
 ```
