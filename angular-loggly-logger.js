@@ -20,10 +20,12 @@
       var extra = {};
       var includeCurrentUrl = false;
       var includeTimestamp = false;
+      var includeUserAgent = false;
       var tag = null;
       var sendConsoleErrors = false;
       var logToConsole = true;
       var loggingEnabled = true;
+      var labels = {};
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -47,6 +49,15 @@
         }
 
         return extra;
+      };
+
+      this.labels = function(l) {
+        if (angular.isObject(l)) {
+          labels = l;
+          return self;
+        }
+
+        return labels;
       };
 
       this.inputToken = function ( s ) {
@@ -83,6 +94,15 @@
         }
 
         return includeTimestamp;
+      };
+
+      this.includeUserAgent = function (flag) {
+        if (angular.isDefined(flag)) {
+          includeUserAgent = !!flag;
+          return self;
+        }
+
+        return includeUserAgent;
       };
 
       this.inputTag = function (usrTag){
@@ -159,6 +179,7 @@
           }
 
           //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
+          var $window = $injector.get( '$window' );
           var $location = $injector.get( '$location' );
 		   //we're injecting $http
           var $http = $injector.get( '$http' );
@@ -175,6 +196,10 @@
             sentData.timestamp = lastLog.toISOString();
           }
 
+          if( includeUserAgent ) {
+            sentData.userAgent = $window.navigator.userAgent;
+          }
+
           //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
            //Set header
           var config = {
@@ -184,6 +209,13 @@
             withCredentials: false
           };
 
+          // Apply labels
+          for (var label in labels) {
+            if (label in sentData) {
+              sentData[labels[label]] = sentData[label];
+              delete sentData[label];
+            }
+          }
 
           //Ajax call to send data to loggly
           $http.post(buildUrl(),sentData,config);
