@@ -112,6 +112,20 @@ The following configuration options are available.
     // keep sending messages to Loggly in production without also sending them
     // to the console.   Default is true.
     .logToConsole( true )
+    
+    // Custom labels for standard log fields. Use this to customize your log 
+    // message format or to shorten your logging payload. All available labels
+    // are listed in this example.
+    .labels({
+      col: 'c',
+      level: 'lvl',
+      line: 'l',
+      logger: 'lgr',
+      message: 'msg',
+      stack: 'stk',
+      timestamp: 'ts',
+      url: 'url'
+    })
 
 ```
 

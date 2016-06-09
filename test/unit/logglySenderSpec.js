@@ -94,7 +94,7 @@ describe('logglyLogger Module:', function() {
                 forbiddenCallTriggered = true;
                 return [400, ''];
             });
-            
+
       service.sendMessage("A test message");
       // Let test fail when request was triggered.
       expect(forbiddenCallTriggered).toBe(false);
@@ -144,7 +144,7 @@ describe('logglyLogger Module:', function() {
       generatedURL = new URL(url);
       return [200, "", {}];
       });
-            
+
       service.sendMessage(message);
 
       $httpBackend.flush();
@@ -175,7 +175,7 @@ describe('logglyLogger Module:', function() {
                 payload = JSON.parse(data);
                 return [200, "", {}];
         });
-            
+
       service.sendMessage( message );
 
       $httpBackend.flush();
@@ -212,7 +212,7 @@ describe('logglyLogger Module:', function() {
       service.sendMessage( { message: message } );
 
        $httpBackend.flush();
-       expect(payload).toEqual({ appVersion: '1.1.0', browser: 'Chrome', message: message });     
+       expect(payload).toEqual({ appVersion: '1.1.0', browser: 'Chrome', message: message });
 
        var expectMessage2 = { appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin', message: 'A Test message' };
 
@@ -351,7 +351,7 @@ describe('logglyLogger Module:', function() {
             generatedURL = url;
             return [200, "", {}];
         });
-        
+
         service.sendMessage(message);
         $httpBackend.flush();
         expect(generatedURL).toEqual(testURL);
@@ -377,7 +377,28 @@ describe('logglyLogger Module:', function() {
       expect(logglyLoggerProvider.inputToken()).toEqual('foo');
     });
 
+    it('will override labels as specified', function () {
+      var token = 'test123456';
+      var message = { message: 'A Test message' };
+      var expectMessage = { msg: 'A Test message' };
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
+      logglyLoggerProvider.inputToken( token );
+      logglyLoggerProvider.labels({
+        message: 'msg'
+      });
+
+      $httpBackend
+        .whenPOST(testURL)
+        .respond(function (method, url, data) {
+          expect(JSON.parse(data)).toEqual(expectMessage);
+          return [200, "", {}];
+        });
+
+      service.sendMessage( message );
+
+      $httpBackend.flush();
+    });
   });
 
 });

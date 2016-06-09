@@ -24,6 +24,7 @@
       var sendConsoleErrors = false;
       var logToConsole = true;
       var loggingEnabled = true;
+      var labels = {};
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -47,6 +48,15 @@
         }
 
         return extra;
+      };
+
+      this.labels = function(l) {
+        if (angular.isObject(l)) {
+          labels = l;
+          return self;
+        }
+
+        return labels;
       };
 
       this.inputToken = function ( s ) {
@@ -184,6 +194,13 @@
             withCredentials: false
           };
 
+          // Apply labels
+          for (var label in labels) {
+            if (label in sentData) {
+              sentData[labels[label]] = sentData[label];
+              delete sentData[label];
+            }
+          }
 
           //Ajax call to send data to loggly
           $http.post(buildUrl(),sentData,config);
