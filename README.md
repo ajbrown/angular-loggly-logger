@@ -96,6 +96,10 @@ The following configuration options are available.
     // should the value of $location.absUrl() be sent as a "url" key in the
     // message object that's sent to loggly?  Default is false.
     .includeUrl( false )
+    
+    // should the value of $window.navigator.userAgent be sent as a "userAgent" key in the
+    // message object that's sent to loggly?  Default is false.
+    .includeUserAgent( false )
 
     // should the current timestamp be included? Default is false.
     .includeTimestamp( false )
@@ -112,6 +116,21 @@ The following configuration options are available.
     // keep sending messages to Loggly in production without also sending them
     // to the console.   Default is true.
     .logToConsole( true )
+    
+    // Custom labels for standard log fields. Use this to customize your log 
+    // message format or to shorten your logging payload. All available labels
+    // are listed in this example.
+    .labels({
+      col: 'c',
+      level: 'lvl',
+      line: 'l',
+      logger: 'lgr',
+      message: 'msg',
+      stack: 'stk',
+      timestamp: 'ts',
+      url: 'url',
+      userAgent: 'userAgent'
+    })
 
 ```
 
