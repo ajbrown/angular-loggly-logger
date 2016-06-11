@@ -4,14 +4,22 @@
 
 describe('logglyLogger Module:', function() {
   var logglyLoggerProvider,
-    levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
+    levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'],
+    realOnerror, mockOnerror;
 
   beforeEach(function () {
+    // Karma defines window.onerror to kill the test when it's called, so stub out window.onerror
+    // Jasmine still wraps all tests in a try/catch, so tests that throw errors will still be handled gracefully
+    realOnerror = window.onerror;
+    mockOnerror = jasmine.createSpy();
+    window.onerror = mockOnerror;
+
     // Initialize the service provider
     // by injecting it to a fake module's config block
     var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
     fakeModule.config( function(LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
+      logglyLoggerProvider.sendConsoleErrors(true)
     });
 
     // Initialize test.app injector
@@ -22,6 +30,9 @@ describe('logglyLogger Module:', function() {
     inject(function() {});
   });
 
+  afterEach(function() {
+    window.onerror = realOnerror;
+  });
 
   describe( 'LogglyLoggerProvider', function() {
     it( 'can have a logging level configured', function() {
@@ -382,6 +393,27 @@ describe('logglyLogger Module:', function() {
         });
 
       service.sendMessage( message );
+
+      $httpBackend.flush();
+    });
+
+    it('should log console errors if sendConsoleErrors() is not false', function() {
+      var error = new Error("some error");
+      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2, stack: error.stack};
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+
+      logglyLoggerProvider.inputToken(token);
+
+      $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function () {
+          return [200, "", {}];
+        });
+
+      window.onerror(error.message, "foo.com", 1, 2, error);
+
+      // Ensure the preexisting window.onerror is called
+      expect(mockOnerror).toHaveBeenCalled();
 
       $httpBackend.flush();
     });
