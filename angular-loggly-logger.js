@@ -244,7 +244,6 @@
             logger.sendMessage({
               level : 'ERROR',
               message: msg,
-              url: url,
               line: line,
               col: col
             });

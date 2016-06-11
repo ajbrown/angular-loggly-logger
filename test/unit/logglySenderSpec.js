@@ -5,14 +5,22 @@
 describe('logglyLogger Module:', function() {
   var logglyLoggerProvider,
       moduleTest = this,
-      levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
+      levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'],
+      realOnerror, mockOnerror;
 
   beforeEach(function () {
+    // Karma defines window.onerror to kill the test when it's called, so stub out window.onerror
+    // Jasmine still wraps all tests in a try/catch, so tests that throw errors will still be handled gracefully
+    realOnerror = window.onerror;
+    mockOnerror = jasmine.createSpy();
+    window.onerror = mockOnerror;
+
     // Initialize the service provider
     // by injecting it to a fake module's config block
     var fakeModule = angular.module('testing.harness', ['logglyLogger'], function () {});
     fakeModule.config( function(LogglyLoggerProvider) {
       logglyLoggerProvider = LogglyLoggerProvider;
+      logglyLoggerProvider.sendConsoleErrors(true)
     });
 
     // Initialize test.app injector
@@ -23,6 +31,9 @@ describe('logglyLogger Module:', function() {
     inject(function() {});
   });
 
+  afterEach(function() {
+    window.onerror = realOnerror;
+  });
 
   describe( 'LogglyLoggerProvider', function() {
 
@@ -94,7 +105,7 @@ describe('logglyLogger Module:', function() {
                 forbiddenCallTriggered = true;
                 return [400, ''];
             });
-            
+
       service.sendMessage("A test message");
       // Let test fail when request was triggered.
       expect(forbiddenCallTriggered).toBe(false);
@@ -144,7 +155,7 @@ describe('logglyLogger Module:', function() {
       generatedURL = new URL(url);
       return [200, "", {}];
       });
-            
+
       service.sendMessage(message);
 
       $httpBackend.flush();
@@ -175,7 +186,7 @@ describe('logglyLogger Module:', function() {
                 payload = JSON.parse(data);
                 return [200, "", {}];
         });
-            
+
       service.sendMessage( message );
 
       $httpBackend.flush();
@@ -212,7 +223,7 @@ describe('logglyLogger Module:', function() {
       service.sendMessage( { message: message } );
 
        $httpBackend.flush();
-       expect(payload).toEqual({ appVersion: '1.1.0', browser: 'Chrome', message: message });     
+       expect(payload).toEqual({ appVersion: '1.1.0', browser: 'Chrome', message: message });
 
        var expectMessage2 = { appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin', message: 'A Test message' };
 
@@ -351,7 +362,7 @@ describe('logglyLogger Module:', function() {
             generatedURL = url;
             return [200, "", {}];
         });
-        
+
         service.sendMessage(message);
         $httpBackend.flush();
         expect(generatedURL).toEqual(testURL);
@@ -377,7 +388,28 @@ describe('logglyLogger Module:', function() {
       expect(logglyLoggerProvider.inputToken()).toEqual('foo');
     });
 
+    it('should log console errors if sendConsoleErrors() is not false', function() {
+      var token = 'test123456';
+      var error = new Error("some error");
+      var message = {message: 'A test message'};
+      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2};
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
+      logglyLoggerProvider.inputToken(token);
+
+      $httpBackend
+        .expectPOST(testURL, expectMessage)
+        .respond(function () {
+          return [200, "", {}];
+        });
+
+      window.onerror(error.message, "foo.com", 1, 2, error);
+
+      // Ensure the preexisting window.onerror is called
+      expect(mockOnerror).toHaveBeenCalled();
+
+      $httpBackend.flush();
+    });
   });
 
 });
