@@ -399,7 +399,7 @@ describe('logglyLogger Module:', function() {
 
     it('should log console errors if sendConsoleErrors() is not false', function() {
       var error = new Error("some error");
-      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2};
+      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2, stack: error.stack};
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
       logglyLoggerProvider.inputToken(token);

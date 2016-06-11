@@ -272,12 +272,13 @@
           var _onerror = window.onerror;
 
           //send console error messages to Loggly
-          window.onerror = function (msg, url, line, col) {
+          window.onerror = function (msg, url, line, col, error) {
             logger.sendMessage({
               level : 'ERROR',
               message: msg,
               line: line,
-              col: col
+              col: col,
+              stack: error && error.stack
             });
 
             if (_onerror && typeof _onerror === 'function') {
