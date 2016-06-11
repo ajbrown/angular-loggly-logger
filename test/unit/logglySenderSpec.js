@@ -392,7 +392,7 @@ describe('logglyLogger Module:', function() {
       var token = 'test123456';
       var error = new Error("some error");
       var message = {message: 'A test message'};
-      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2};
+      var expectMessage = {level: 'ERROR', message: error.message, line: 1, col: 2, stack: error.stack};
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
       logglyLoggerProvider.inputToken(token);
