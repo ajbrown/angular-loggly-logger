@@ -39,7 +39,7 @@ angular.module( 'myApp', [require('angular-loggly-logger')] )
     $log.info( "I'm a little teapot." );
 
     //This will be sent to loggly only
-    LogglyLogger.sendMessage( 'Short and Stout.' )
+    LogglyLogger.sendMessage( { message : 'Short and Stout.' } );
   }])
 
 ```
