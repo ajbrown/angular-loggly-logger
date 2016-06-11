@@ -16,6 +16,12 @@ LogglyLogger can be installed with bower:
 bower install angular-loggly-logger
 ```
 
+Or with npm:
+
+```
+npm install --save angular-loggly-logger
+```
+
 Once configured (by including "logglyLogger" as a module dependency), the `$log`
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
@@ -39,7 +45,7 @@ angular.module( 'myApp', [require('angular-loggly-logger')] )
     $log.info( "I'm a little teapot." );
 
     //This will be sent to loggly only
-    LogglyLogger.sendMessage( 'Short and Stout.' )
+    LogglyLogger.sendMessage( { message : 'Short and Stout.' } );
   }])
 
 ```
