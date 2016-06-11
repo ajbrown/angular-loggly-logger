@@ -16,6 +16,12 @@ LogglyLogger can be installed with bower:
 bower install angular-loggly-logger
 ```
 
+Or with npm:
+
+```
+npm install --save angular-loggly-logger
+```
+
 Once configured (by including "logglyLogger" as a module dependency), the `$log`
 service will automatically be decorated, and all messages logged will be handled
 as normal as well as formated and passed to LogglyLogger.sendMessage.
@@ -39,7 +45,7 @@ angular.module( 'myApp', [require('angular-loggly-logger')] )
     $log.info( "I'm a little teapot." );
 
     //This will be sent to loggly only
-    LogglyLogger.sendMessage( 'Short and Stout.' )
+    LogglyLogger.sendMessage( { message : 'Short and Stout.' } );
   }])
 
 ```
@@ -97,6 +103,10 @@ The following configuration options are available.
     // message object that's sent to loggly?  Default is false.
     .includeUrl( false )
 
+    // should the value of $window.navigator.userAgent be sent as a "userAgent" key in the
+    // message object that's sent to loggly?  Default is false.
+    .includeUserAgent( false )
+
     // should the current timestamp be included? Default is false.
     .includeTimestamp( false )
 
@@ -112,6 +122,21 @@ The following configuration options are available.
     // keep sending messages to Loggly in production without also sending them
     // to the console.   Default is true.
     .logToConsole( true )
+
+    // Custom labels for standard log fields. Use this to customize your log
+    // message format or to shorten your logging payload. All available labels
+    // are listed in this example.
+    .labels({
+      col: 'c',
+      level: 'lvl',
+      line: 'l',
+      logger: 'lgr',
+      message: 'msg',
+      stack: 'stk',
+      timestamp: 'ts',
+      url: 'url',
+      userAgent: 'userAgent'
+    })
 
 ```
 
@@ -152,8 +177,10 @@ Beware that when using `setExtra` with `LogglyLogger.sendMessage( obj )`, any pr
 
 ## ChangeLog
 - v0.2.2 - Fixes preflight cross origin issues.
+- v0.2.3 - Fixes npm install issues related to Bower.
+- v0.2.4 - Adds customizable labels, error stacktraces, and user-agent logging.
 
 
 ## Contributing
 
-Contributions are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger/issues), or code by creating a new pull request.  Please make sure your pull request targets the "master" branch.
+Contributions are awesome, welcomed, and wanted.  Please contribute ideas by [opening a new issue](http://github.com/ajbrown/angular-loggy-logger/issues), or code by creating a new pull request.  Please make sure your pull request targets the "develop" branch.
