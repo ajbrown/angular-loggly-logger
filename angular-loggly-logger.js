@@ -306,8 +306,8 @@
 
             if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {
               //handling console errors
-              if(logger.sendConsoleErrors() === true){
-                sending.message = msg.message || msg[0].message;
+              if(logger.sendConsoleErrors() === true) {
+                sending.message = msg.message ? msg.message : (msg[0] && msg[0].message) ? msg[0].message : null;
                 sending.stack = msg.stack || msg[0].stack;
               }
               else {
