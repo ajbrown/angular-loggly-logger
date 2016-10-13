@@ -238,6 +238,7 @@
           level : function() { return level; },
           loggingEnabled: self.loggingEnabled,
           isLevelEnabled : self.isLevelEnabled,
+          inputTag: self.inputTag,
           attach: attach,
           sendMessage: sendMessage,
           logToConsole: logToConsole,
