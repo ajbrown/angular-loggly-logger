@@ -26,6 +26,7 @@
       var logToConsole = true;
       var loggingEnabled = true;
       var labels = {};
+      var deleteHeaders = false;
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -163,6 +164,17 @@
         return logToConsole;
       };
 
+      this.deleteHeaders = function (flag) {
+        if (angular.isDefined(flag)) {
+          deleteHeaders = !!flag;
+          return self;
+        }
+
+        return deleteHeaders;
+      };
+
+
+
       this.$get = [ '$injector', function ($injector) {
 
         var lastLog = null;
@@ -208,6 +220,19 @@
             },
             withCredentials: false
           };
+
+          if (deleteHeaders) {
+            //Delete other headers - this tells browser it's no need to pre-flight OPTIONS request
+            var headersToDelete = Object.keys($http.defaults.headers.common).concat(Object.keys($http.defaults.headers.post));
+            headersToDelete = headersToDelete.filter(function(item) {
+              return item !== 'Accept' && item !== 'Content-Type';
+            });
+
+            for (var index = 0; index < headersToDelete.length; index++) {
+              var headerName = headersToDelete[index];
+              config.headers[headerName] = undefined;
+            }
+          }
 
           // Apply labels
           for (var label in labels) {
