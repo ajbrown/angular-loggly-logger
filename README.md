@@ -123,6 +123,12 @@ The following configuration options are available.
     // to the console.   Default is true.
     .logToConsole( true )
 
+    //Toggle delete other headers. If there are any other headers than Accept
+    //and Content-Type in request, the browser will first send pre-flight OPTIONS
+    //request.
+    //Turn this on if you see HTTP 405 errors in console. 
+    .deleteHeaders( false )
+
     // Custom labels for standard log fields. Use this to customize your log
     // message format or to shorten your logging payload. All available labels
     // are listed in this example.
