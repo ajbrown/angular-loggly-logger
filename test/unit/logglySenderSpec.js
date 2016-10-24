@@ -73,7 +73,7 @@ describe('logglyLogger Module:', function() {
   describe( 'LogglyLogger', function() {
     var token = 'test123456',
       tag = 'logglyLogger',
-      message, service, $log, $httpBackend;
+      message, service, $log, $httpBackend, $http;
 
     beforeEach(function () {
       message = {message: 'A test message'};
@@ -81,6 +81,7 @@ describe('logglyLogger Module:', function() {
       inject(function ($injector) {
         $log = $injector.get('$log');
         $httpBackend = $injector.get('$httpBackend');
+        $http = $injector.get('$http');
         service = $injector.get('LogglyLogger');
         service.attach();
       });
@@ -414,6 +415,43 @@ describe('logglyLogger Module:', function() {
 
       // Ensure the preexisting window.onerror is called
       expect(mockOnerror).toHaveBeenCalled();
+
+      $httpBackend.flush();
+    });
+
+    it('should keep http headers if deleteHeaders is set to false', function() {
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+      $http.defaults.headers.common.Authorization = 'token';
+      logglyLoggerProvider.inputToken(token);
+
+      $httpBackend
+        .expectPOST(testURL, {}, function(headers) {
+          return headers['Authorization'] === 'token';
+        })
+        .respond(function () {
+          return [200, "", {}];
+        });
+
+      service.sendMessage("A test message");
+
+      $httpBackend.flush();
+    });
+
+    it('should delete http headers if deleteHeaders is set to true', function() {
+      var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
+      $http.defaults.headers.common.Authorization = 'token';
+      logglyLoggerProvider.deleteHeaders(true);
+      logglyLoggerProvider.inputToken(token);
+
+      $httpBackend
+        .expectPOST(testURL, {}, function(headers) {
+          return headers['Authorization'] === undefined;
+        })
+        .respond(function () {
+          return [200, "", {}];
+        });
+
+      service.sendMessage("A test message");
 
       $httpBackend.flush();
     });
