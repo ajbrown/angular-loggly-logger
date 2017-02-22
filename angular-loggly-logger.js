@@ -6,8 +6,12 @@
  *  post on [Enhancing AngularJs Logging using Decorators](http://bit.ly/1pOI0bb)
  *  provided the foundation (if not the majority of the brainpower) for this
  *  module.
+ *
+ *  @version 0.3.0
+ *  @author A.J. Brown <aj@ajbrown.org>
+ *  @license MIT License, http://www.opensource.org/licenses/MIT
  */
-; (function( angular ) {
+(function( angular ) {
   "use strict";
 
   angular.module( 'logglyLogger.logger', [] )
@@ -26,6 +30,7 @@
       var logToConsole = true;
       var loggingEnabled = true;
       var labels = {};
+      var deleteHeaders = false;
 
       // The minimum level of messages that should be sent to loggly.
       var level = 0;
@@ -163,6 +168,17 @@
         return logToConsole;
       };
 
+      this.deleteHeaders = function (flag) {
+        if (angular.isDefined(flag)) {
+          deleteHeaders = !!flag;
+          return self;
+        }
+
+        return deleteHeaders;
+      };
+
+
+
       this.$get = [ '$injector', function ($injector) {
 
         var lastLog = null;
@@ -209,6 +225,19 @@
             withCredentials: false
           };
 
+          if (deleteHeaders) {
+            //Delete other headers - this tells browser it's no need to pre-flight OPTIONS request
+            var headersToDelete = Object.keys($http.defaults.headers.common).concat(Object.keys($http.defaults.headers.post));
+            headersToDelete = headersToDelete.filter(function(item) {
+              return item !== 'Accept' && item !== 'Content-Type';
+            });
+
+            for (var index = 0; index < headersToDelete.length; index++) {
+              var headerName = headersToDelete[index];
+              config.headers[headerName] = undefined;
+            }
+          }
+
           // Apply labels
           for (var label in labels) {
             if (label in sentData) {
@@ -238,6 +267,7 @@
           level : function() { return level; },
           loggingEnabled: self.loggingEnabled,
           isLevelEnabled : self.isLevelEnabled,
+          inputTag: self.inputTag,
           attach: attach,
           sendMessage: sendMessage,
           logToConsole: logToConsole,
@@ -306,8 +336,8 @@
 
             if(angular.isDefined(msg.stack) || (angular.isDefined(msg[0]) && angular.isDefined(msg[0].stack))) {
               //handling console errors
-              if(logger.sendConsoleErrors() === true){
-                sending.message = msg.message || msg[0].message;
+              if(logger.sendConsoleErrors() === true) {
+                sending.message = msg.message ? msg.message : (msg[0] && msg[0].message) ? msg[0].message : null;
                 sending.stack = msg.stack || msg[0].stack;
               }
               else {
