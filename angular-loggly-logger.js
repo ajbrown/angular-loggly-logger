@@ -6,8 +6,12 @@
  *  post on [Enhancing AngularJs Logging using Decorators](http://bit.ly/1pOI0bb)
  *  provided the foundation (if not the majority of the brainpower) for this
  *  module.
+ *
+ *  @version 0.3.0
+ *  @author A.J. Brown <aj@ajbrown.org>
+ *  @license MIT License, http://www.opensource.org/licenses/MIT
  */
-; (function( angular ) {
+(function( angular ) {
   "use strict";
 
   angular.module( 'logglyLogger.logger', [] )
