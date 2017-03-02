@@ -49,7 +49,7 @@
 
       this.fields = function ( d ) {
         if( angular.isDefined( d ) ) {
-          extra = d;
+          angular.extend(extra, d);
           return self;
         }
 
