@@ -1,6 +1,6 @@
 {
   "name": "angular-loggly-logger",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "index.js",
   "description": "An AngularJs service and $log decorator for Loggly",
   "repository": {
@@ -10,9 +10,141 @@
   "bugs": "https://github.com/ajbrown/angular-loggly-logger/issues",
   "author": "A.J. Brown <aj@ajbrown.org> (http://ajbrown.org)",
   "contributors": [
-    "Jason Skowronski (https://github.com/mostlyjason)",
-    "Vin Halbwachs (https://github.com/vhalbwachs)",
-    "Jake Todaro (https://github.com/jaketodaro)"
+    {
+      "name": "Milos Janjic",
+      "email": "milosh012@gmail.com",
+      "url": "https://github.com/milosh012",
+      "contributions": 1,
+      "additions": 7,
+      "deletions": 6,
+      "hireable": true
+    },
+    {
+      "name": "Will McClellan",
+      "email": null,
+      "url": "https://github.com/willmcclellan",
+      "contributions": 1,
+      "additions": 1,
+      "deletions": 0,
+      "hireable": null
+    },
+    {
+      "name": "Theodore Brockman",
+      "email": null,
+      "url": "https://github.com/tbrockman",
+      "contributions": 1,
+      "additions": 48,
+      "deletions": 4,
+      "hireable": null
+    },
+    {
+      "name": "Guillaume Grégoire",
+      "email": null,
+      "url": "https://github.com/ggregoire",
+      "contributions": 1,
+      "additions": 3,
+      "deletions": 3,
+      "hireable": true
+    },
+    {
+      "name": "Willian Ganzert Lopes",
+      "email": null,
+      "url": "https://github.com/willianganzert",
+      "contributions": 1,
+      "additions": 6,
+      "deletions": 6,
+      "hireable": true
+    },
+    {
+      "name": "James Whitney",
+      "email": "james@whitney.io",
+      "url": "https://github.com/whitneyit",
+      "contributions": 2,
+      "additions": 32,
+      "deletions": 26,
+      "hireable": null
+    },
+    {
+      "name": "Fkscorpion",
+      "email": null,
+      "url": "https://github.com/Fkscorpion",
+      "contributions": 1,
+      "additions": 4,
+      "deletions": 4,
+      "hireable": null
+    },
+    {
+      "name": "Korotaev Alexander",
+      "email": null,
+      "url": "https://github.com/lekzd",
+      "contributions": 1,
+      "additions": 3,
+      "deletions": 2,
+      "hireable": null
+    },
+    {
+      "name": "Elisha Terada",
+      "email": "elishaterada@gmail.com",
+      "url": "https://github.com/elishaterada",
+      "contributions": 2,
+      "additions": 122,
+      "deletions": 15,
+      "hireable": null
+    },
+    {
+      "name": "Jason Skowronski",
+      "email": null,
+      "url": "https://github.com/mostlyjason",
+      "contributions": 3,
+      "additions": 50,
+      "deletions": 25,
+      "hireable": null
+    },
+    {
+      "name": null,
+      "email": null,
+      "url": "https://github.com/varshneyjayant",
+      "contributions": 3,
+      "additions": 359,
+      "deletions": 364,
+      "hireable": null
+    },
+    {
+      "name": "A.J. Brown",
+      "email": "aj@ajbrown.org",
+      "url": "https://github.com/ajbrown",
+      "contributions": 45,
+      "additions": 1624,
+      "deletions": 669,
+      "hireable": null
+    },
+    {
+      "name": "Vin Halbwachs",
+      "email": null,
+      "url": "https://github.com/vhalbwachs",
+      "contributions": 2,
+      "additions": 56,
+      "deletions": 52,
+      "hireable": true
+    },
+    {
+      "name": "Lukáš Marek",
+      "email": "lukas.marek@gmail.com",
+      "url": "https://github.com/krtek",
+      "contributions": 1,
+      "additions": 72,
+      "deletions": 3,
+      "hireable": true
+    },
+    {
+      "name": "Brennon Bortz",
+      "email": "brennon@brennonbortz.com",
+      "url": "https://github.com/brennon",
+      "contributions": 2,
+      "additions": 19,
+      "deletions": 4,
+      "hireable": true
+    }
   ],
   "keywords": [
     "angular",
