@@ -158,7 +158,7 @@ describe('logglyLogger Module:', function() {
     });
 
     it('will include the current url if includeUrl() is not set to false', function () {
-      var expectMessage = angular.extend(message, { url: 'http://bloggly.com' });
+      var expectMessage = angular.extend({}, message, { url: 'http://bloggly.com' });
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
       var payload;
 
@@ -185,7 +185,7 @@ describe('logglyLogger Module:', function() {
     });
 
     it('will include the current userAgent if includeUserAgent() is not set to false', function () {
-      var expectMessage = angular.extend(message, { userAgent: window.navigator.userAgent });
+      var expectMessage = angular.extend({}, message, { userAgent: window.navigator.userAgent });
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
       var payload;
 
@@ -209,7 +209,7 @@ describe('logglyLogger Module:', function() {
     it( 'can set extra fields using the fields method', function() {
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
 
-      expect( service.fields( extra )).toBe( extra );
+      expect( service.fields( extra )).toEqual( extra );
       expect( service.fields() ).toEqual( extra );
     });
 
@@ -217,7 +217,7 @@ describe('logglyLogger Module:', function() {
     it( 'will include extra fields if set via provider and service', function() {
       var payload, payload2;
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
-      var expectMessage = angular.extend(message, extra);
+      var expectMessage = angular.extend({}, message, extra);
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
 
       logglyLoggerProvider.inputToken( token );
@@ -235,10 +235,9 @@ describe('logglyLogger Module:', function() {
       $httpBackend.flush();
       expect(payload).toEqual(expectMessage);
 
-      var expectMessage2 = angular.extend(message, { appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin' });
+      var expectMessage2 = angular.extend({}, message, { appVersion: '1.1.0', browser: 'Chrome', username: 'baldrin' });
 
-      extra.username = "baldrin";
-      service.fields( extra );
+      service.fields({username: "baldrin"});
       $httpBackend
         .expectPOST(testURL, expectMessage2)
         .respond(function (method, url, data) {
@@ -255,7 +254,7 @@ describe('logglyLogger Module:', function() {
       var payload;
       var testURL = 'https://logs-01.loggly.com/inputs/test123456/tag/AngularJS/';
       var extra = { appVersion: '1.1.0', browser: 'Chrome' };
-      var expectMessage = angular.extend(message, extra);
+      var expectMessage = angular.extend({}, message, extra);
 
       logglyLoggerProvider.inputToken( token );
       logglyLoggerProvider.fields( extra );
@@ -281,7 +280,7 @@ describe('logglyLogger Module:', function() {
       logglyLoggerProvider.includeUrl( false );
 
       angular.forEach( levels, function (level) {
-        expectMessage = angular.extend(message, { level: level });
+        expectMessage = angular.extend({}, message, { level: level });
         $httpBackend
           .expectPOST(testURL, expectMessage)
           .respond(function (method, url, data) {
