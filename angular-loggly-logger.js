@@ -247,7 +247,7 @@
           }
 
           //Ajax call to send data to loggly
-          $http.post(buildUrl(),sentData,config);
+          $http.post(buildUrl(),sentData,config).catch(console.error);
         };
 
         var attach = function() {
